@@ -9,10 +9,12 @@ import { buildEChartsTheme } from '../theme/theme-builder';
 import { TableEditor } from './table-editor';
 
 export interface ModalState {
+	mode?: 'simple' | 'advanced';
 	type: 'bar' | 'line' | 'pie' | 'scatter';
 	title: string;
 	xAxis: string;
 	tableText: string;
+	echartsYaml?: string;
 }
 
 export const DEFAULT_STATE: ModalState = {
@@ -21,6 +23,17 @@ export const DEFAULT_STATE: ModalState = {
 	xAxis: '',
 	tableText: '| category | value |\n| --- | --- |\n| A | 10 |\n| B | 20 |',
 };
+
+const DEFAULT_ADVANCED_YAML =
+`echarts:
+  xAxis:
+    type: category
+    data: [A, B, C]
+  yAxis:
+    type: value
+  series:
+    - type: bar
+      data: [10, 20, 30]`;
 
 const CHART_TYPES: ModalState['type'][] = ['bar', 'line', 'pie', 'scatter'];
 const THEME_LIGHT = 'fancy-charts-light';
@@ -45,6 +58,10 @@ export function deserializeBlock(raw: string): ModalState {
 	const config = parseYaml(split.yaml);
 	if ('error' in config) return { ...DEFAULT_STATE };
 
+	if ('echarts' in config) {
+		return { ...DEFAULT_STATE, mode: 'advanced', echartsYaml: raw.trim() };
+	}
+
 	const rawType = config['type'];
 	const type: ModalState['type'] = VALID_TYPES.includes(rawType as ModalState['type'])
 		? (rawType as ModalState['type'])
@@ -59,6 +76,9 @@ export function deserializeBlock(raw: string): ModalState {
 
 export class FancyChartsModal extends Modal {
 	private state: ModalState;
+	private isAdvancedMode: boolean;
+	private advancedYaml: string;
+	private formEl: HTMLElement | null = null;
 	private xAxisInput: HTMLInputElement | null = null;
 	private previewChartEl: HTMLElement | null = null;
 	private previewErrorEl: HTMLElement | null = null;
@@ -69,6 +89,8 @@ export class FancyChartsModal extends Modal {
 	constructor(app: App, private onConfirm: (block: string) => void, initialState?: ModalState) {
 		super(app);
 		this.state = initialState ? { ...initialState } : { ...DEFAULT_STATE };
+		this.isAdvancedMode = initialState?.mode === 'advanced';
+		this.advancedYaml = initialState?.echartsYaml ?? DEFAULT_ADVANCED_YAML;
 	}
 
 	onOpen(): void {
@@ -78,10 +100,10 @@ export class FancyChartsModal extends Modal {
 		contentEl.classList.add('fc-modal');
 
 		const layout = contentEl.createDiv({ cls: 'fc-modal-layout' });
-		const formEl = layout.createDiv({ cls: 'fc-modal-form' });
+		this.formEl = layout.createDiv({ cls: 'fc-modal-form' });
 		const previewEl = layout.createDiv({ cls: 'fc-modal-preview' });
 
-		this.renderForm(formEl);
+		this.renderForm(this.formEl);
 		this.renderPreviewArea(previewEl);
 		this.renderButtons(contentEl);
 
@@ -89,6 +111,43 @@ export class FancyChartsModal extends Modal {
 	}
 
 	private renderForm(container: HTMLElement): void {
+		this.renderModeToggle(container);
+		if (this.isAdvancedMode) {
+			this.renderAdvancedFields(container);
+		} else {
+			this.renderSimpleFields(container);
+		}
+	}
+
+	private renderModeToggle(container: HTMLElement): void {
+		const wrap = container.createDiv({ cls: 'fc-modal-mode-toggle' });
+		const simpleBtn = wrap.createEl('button', { cls: 'fc-modal-mode-btn', text: 'Simple' });
+		const advBtn    = wrap.createEl('button', { cls: 'fc-modal-mode-btn', text: 'Advanced' });
+
+		const refresh = () => {
+			simpleBtn.classList.toggle('is-active', !this.isAdvancedMode);
+			advBtn.classList.toggle('is-active', this.isAdvancedMode);
+		};
+		refresh();
+
+		simpleBtn.addEventListener('click', () => this.switchMode(false));
+		advBtn.addEventListener('click', () => this.switchMode(true));
+	}
+
+	private switchMode(toAdvanced: boolean): void {
+		if (this.isAdvancedMode === toAdvanced) return;
+		this.isAdvancedMode = toAdvanced;
+		this.tableEditor?.destroy();
+		this.tableEditor = null;
+		this.xAxisInput = null;
+		if (this.formEl) {
+			this.formEl.innerHTML = '';
+			this.renderForm(this.formEl);
+		}
+		this.schedulePreviewUpdate();
+	}
+
+	private renderSimpleFields(container: HTMLElement): void {
 		this.renderField(container, 'Chart type', el => {
 			const select = el.createEl('select', { cls: 'fc-modal-input' });
 			for (const t of CHART_TYPES) {
@@ -131,6 +190,18 @@ export class FancyChartsModal extends Modal {
 		});
 	}
 
+	private renderAdvancedFields(container: HTMLElement): void {
+		this.renderField(container, 'ECharts option (YAML)', el => {
+			const ta = el.createEl('textarea', { cls: 'fc-modal-advanced-textarea' });
+			ta.value = this.advancedYaml;
+			ta.rows = 14;
+			ta.addEventListener('input', () => {
+				this.advancedYaml = ta.value;
+				this.schedulePreviewUpdate();
+			});
+		});
+	}
+
 	private renderPreviewArea(container: HTMLElement): void {
 		container.createEl('p', { cls: 'fc-modal-preview-label', text: 'Preview' });
 		this.previewChartEl = container.createDiv({ cls: 'fc-modal-preview-chart' });
@@ -138,12 +209,19 @@ export class FancyChartsModal extends Modal {
 		this.previewErrorEl.style.display = 'none';
 	}
 
+	private currentBlock(): string {
+		if (this.isAdvancedMode) {
+			return `\`\`\`fancy-charts\n${this.advancedYaml.trim()}\n\`\`\``;
+		}
+		return serializeBlock(this.state);
+	}
+
 	private renderButtons(container: HTMLElement): void {
 		const row = container.createDiv({ cls: 'fc-modal-buttons' });
 
 		const insertBtn = row.createEl('button', { cls: ['fc-modal-insert', 'mod-cta'], text: 'Insert' });
 		insertBtn.addEventListener('click', () => {
-			this.onConfirm(serializeBlock(this.state));
+			this.onConfirm(this.currentBlock());
 			this.close();
 		});
 
@@ -162,7 +240,7 @@ export class FancyChartsModal extends Modal {
 	private updatePreview(): void {
 		if (!this.previewChartEl || !this.previewErrorEl) return;
 
-		const source = serializeBlock(this.state)
+		const source = this.currentBlock()
 			.replace(/^```fancy-charts\n/, '')
 			.replace(/\n```$/, '');
 		const result = parse(source);
@@ -222,6 +300,7 @@ export class FancyChartsModal extends Modal {
 		this.tableEditor = null;
 		this.contentEl.empty();
 		this.xAxisInput = null;
+		this.formEl = null;
 		this.previewChartEl = null;
 		this.previewErrorEl = null;
 	}

@@ -126,6 +126,7 @@
   padding: 3px 6px;
   background: transparent;
   border: none;
+  border-radius: 0;
   color: var(--text-normal);
   font-size: var(--font-ui-small);
   font-family: var(--font-monospace);
@@ -155,6 +156,46 @@
 .fc-table-btn:hover {
   color: var(--text-normal);
   border-color: var(--text-muted);
+}
+
+.fc-modal-mode-toggle {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-s);
+  overflow: hidden;
+}
+
+.fc-modal-mode-btn {
+  flex: 1;
+  padding: 4px 12px;
+  font-size: var(--font-ui-small);
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.fc-modal-mode-btn + .fc-modal-mode-btn {
+  border-left: 1px solid var(--background-modifier-border);
+}
+
+.fc-modal-mode-btn.is-active {
+  background: var(--background-modifier-hover);
+  color: var(--text-normal);
+}
+
+.fc-modal-advanced-textarea {
+  width: 100%;
+  background: var(--background-modifier-form-field);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-s);
+  padding: 6px 8px;
+  color: var(--text-normal);
+  font-size: var(--font-ui-small);
+  font-family: var(--font-monospace);
+  resize: vertical;
+  box-sizing: border-box;
 }
 
 .fc-modal-buttons {
