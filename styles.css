@@ -126,7 +126,7 @@
   padding: 3px 6px;
   background: transparent;
   border: none;
-  border-radius: 0;
+  border-radius: 0 !important;
   color: var(--text-normal);
   font-size: var(--font-ui-small);
   font-family: var(--font-monospace);
@@ -162,7 +162,7 @@
   display: flex;
   gap: 0;
   border: 1px solid var(--background-modifier-border);
-  border-radius: var(--radius-s);
+  border-radius: 0;
   overflow: hidden;
 }
 
@@ -173,6 +173,7 @@
   color: var(--text-muted);
   background: transparent;
   border: none;
+  border-radius: 0 !important;
   cursor: pointer;
 }
 
