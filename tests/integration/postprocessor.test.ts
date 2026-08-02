@@ -7,17 +7,42 @@ const mockRenderer = vi.hoisted(() => ({
 	dispose: vi.fn(),
 }));
 
-vi.mock('../../src/data/parser', () => ({ parse: vi.fn() }));
-vi.mock('../../src/render/renderer', () => ({
+const mockThemeVars = vi.hoisted(() => ({
+	backgroundPrimary: '#ffffff',
+	textNormal: '#262626',
+	textMuted: '#888888',
+	colorAccent: '#7c3aed',
+	fontInterface: 'sans-serif',
+	fontUiSmall: '12px',
+}));
+
+vi.mock('../../src/data/parser',       () => ({ parse: vi.fn() }));
+vi.mock('../../src/render/renderer',   () => ({
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	ChartRenderer: vi.fn(function(this: any) { Object.assign(this, mockRenderer); }),
 }));
+vi.mock('../../src/render/echarts-init', () => ({
+	echarts: { registerTheme: vi.fn() },
+}));
+vi.mock('../../src/theme/theme-vars',   () => ({
+	isDarkMode:    vi.fn(() => false),
+	readThemeVars: vi.fn(() => mockThemeVars),
+}));
+vi.mock('../../src/theme/theme-builder', () => ({
+	buildEChartsTheme: vi.fn(() => ({ backgroundColor: '#ffffff' })),
+}));
 
-import { parse } from '../../src/data/parser';
-import { ChartRenderer } from '../../src/render/renderer';
+import { parse }                       from '../../src/data/parser';
+import { ChartRenderer }               from '../../src/render/renderer';
+import { echarts }                     from '../../src/render/echarts-init';
+import { isDarkMode }                  from '../../src/theme/theme-vars';
+import { buildEChartsTheme }           from '../../src/theme/theme-builder';
 
-const mockParse = parse as ReturnType<typeof vi.fn>;
-const MockChartRenderer = ChartRenderer as ReturnType<typeof vi.fn>;
+const mockParse         = parse           as ReturnType<typeof vi.fn>;
+const MockChartRenderer = ChartRenderer   as ReturnType<typeof vi.fn>;
+const mockRegisterTheme = (echarts.registerTheme) as ReturnType<typeof vi.fn>;
+const mockIsDarkMode    = isDarkMode      as ReturnType<typeof vi.fn>;
+const mockBuildTheme    = buildEChartsTheme as ReturnType<typeof vi.fn>;
 
 beforeEach(() => { vi.clearAllMocks(); });
 
@@ -32,12 +57,12 @@ describe('FancyChartsRenderChild — successful parse', () => {
 		mockParse.mockReturnValue({ ok: true, mode: 'simple', option });
 	});
 
-	it('constructs ChartRenderer with a .fancy-charts-block div on onload', () => {
+	it('constructs ChartRenderer with a .fancy-charts-block div and theme name on onload', () => {
 		const { child, container } = makeChild();
 		child.onload();
 		const chartEl = container.querySelector('.fancy-charts-block');
 		expect(chartEl).not.toBeNull();
-		expect(MockChartRenderer).toHaveBeenCalledWith(chartEl);
+		expect(MockChartRenderer).toHaveBeenCalledWith(chartEl, 'fancy-charts-light');
 	});
 
 	it('calls renderer.render() with the parsed option', () => {
@@ -57,6 +82,81 @@ describe('FancyChartsRenderChild — successful parse', () => {
 		child.onload();
 		child.onunload();
 		expect(mockRenderer.dispose).toHaveBeenCalled();
+	});
+});
+
+describe('FancyChartsRenderChild — theme wiring', () => {
+	const option = { series: [{ type: 'bar' }] };
+	beforeEach(() => {
+		mockParse.mockReturnValue({ ok: true, mode: 'simple', option });
+	});
+
+	it('calls registerTheme with fancy-charts-light in light mode', () => {
+		mockIsDarkMode.mockReturnValue(false);
+		const { child } = makeChild();
+		child.onload();
+		expect(mockRegisterTheme).toHaveBeenCalledWith('fancy-charts-light', expect.any(Object));
+	});
+
+	it('calls registerTheme with fancy-charts-dark in dark mode', () => {
+		mockIsDarkMode.mockReturnValue(true);
+		const { child } = makeChild();
+		child.onload();
+		expect(mockRegisterTheme).toHaveBeenCalledWith('fancy-charts-dark', expect.any(Object));
+		expect(MockChartRenderer).toHaveBeenCalledWith(expect.any(HTMLElement), 'fancy-charts-dark');
+	});
+
+	it('passes the built theme object to registerTheme', () => {
+		const builtTheme = { backgroundColor: '#1e1e1e' };
+		mockBuildTheme.mockReturnValue(builtTheme);
+		const { child } = makeChild();
+		child.onload();
+		expect(mockRegisterTheme).toHaveBeenCalledWith(expect.any(String), builtTheme);
+	});
+
+	it('disposes and re-inits chart when MutationObserver fires', () => {
+		const MockMO = global.MutationObserver as unknown as ReturnType<typeof vi.fn>;
+		vi.spyOn(global, 'MutationObserver').mockImplementation(
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			vi.fn(function(this: any, cb: MutationCallback) {
+				this.observe = vi.fn();
+				this.disconnect = vi.fn();
+				this._cb = cb;
+			}) as unknown as typeof MutationObserver
+		);
+
+		const { child } = makeChild();
+		child.onload();
+
+		const firstCallCount = MockChartRenderer.mock.calls.length;
+		expect(mockRenderer.dispose).not.toHaveBeenCalled();
+
+		// Simulate a theme mutation
+		const moInstance = (MutationObserver as unknown as ReturnType<typeof vi.fn>).mock.instances[0] as unknown as { _cb: MutationCallback };
+		moInstance._cb([], {} as MutationObserver);
+
+		expect(mockRenderer.dispose).toHaveBeenCalled();
+		expect(MockChartRenderer.mock.calls.length).toBeGreaterThan(firstCallCount);
+
+		vi.restoreAllMocks();
+	});
+
+	it('disconnects MutationObserver on onunload', () => {
+		vi.spyOn(global, 'MutationObserver').mockImplementation(
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			vi.fn(function(this: any) {
+				this.observe = vi.fn();
+				this.disconnect = vi.fn();
+			}) as unknown as typeof MutationObserver
+		);
+
+		const { child } = makeChild();
+		child.onload();
+		const moInstance = (MutationObserver as unknown as ReturnType<typeof vi.fn>).mock.instances[0];
+		child.onunload();
+		expect(moInstance.disconnect).toHaveBeenCalled();
+
+		vi.restoreAllMocks();
 	});
 });
 

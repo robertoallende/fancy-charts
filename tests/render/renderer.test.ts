@@ -7,10 +7,16 @@ beforeEach(() => {
 });
 
 describe('ChartRenderer', () => {
-	it('calls echarts.init with the container and svg renderer', () => {
+	it('calls echarts.init with the container, null theme, and svg renderer when no theme given', () => {
 		const container = document.createElement('div');
 		new ChartRenderer(container);
 		expect(init).toHaveBeenCalledWith(container, null, { renderer: 'svg' });
+	});
+
+	it('passes the theme name to echarts.init when provided', () => {
+		const container = document.createElement('div');
+		new ChartRenderer(container, 'fancy-charts-dark');
+		expect(init).toHaveBeenCalledWith(container, 'fancy-charts-dark', { renderer: 'svg' });
 	});
 
 	it('render() calls setOption with the provided option', () => {

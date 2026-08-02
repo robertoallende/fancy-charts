@@ -6,8 +6,9 @@ export const mockChartInstance = {
 	dispose:   vi.fn(),
 };
 
-export const init = vi.fn(() => mockChartInstance);
-export const use  = vi.fn();
+export const init           = vi.fn(() => mockChartInstance);
+export const use            = vi.fn();
+export const registerTheme  = vi.fn();
 
 // Tree-shaken stubs — all aliased to this file
 export const BarChart       = {};

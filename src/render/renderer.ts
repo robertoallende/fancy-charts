@@ -3,8 +3,8 @@ import { echarts } from './echarts-init';
 export class ChartRenderer {
 	private chart: ReturnType<typeof echarts.init>;
 
-	constructor(container: HTMLElement) {
-		this.chart = echarts.init(container, null, { renderer: 'svg' });
+	constructor(container: HTMLElement, themeName: string = '') {
+		this.chart = echarts.init(container, themeName || null, { renderer: 'svg' });
 	}
 
 	render(option: Record<string, unknown>): void {
