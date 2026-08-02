@@ -1,4 +1,4 @@
-import { serializeBlock, FancyChartsModal } from '../../src/integration/modal';
+import { serializeBlock, deserializeBlock, FancyChartsModal } from '../../src/integration/modal';
 import type { ModalState } from '../../src/integration/modal';
 import { ChartRenderer } from '../../src/render/renderer';
 
@@ -251,5 +251,111 @@ describe('FancyChartsModal — live preview', () => {
 		modal.onClose();
 		vi.advanceTimersByTime(300);
 		expect(ChartRenderer.prototype.render).not.toHaveBeenCalled();
+	});
+});
+
+describe('deserializeBlock', () => {
+	it('recovers type from a serialized block', () => {
+		const state: ModalState = { type: 'line', title: '', xAxis: '', tableText: '| a | b |\n| --- | --- |\n| 1 | 2 |' };
+		const raw = serializeBlock(state).replace(/^```fancy-charts\n/, '').replace(/\n```$/, '');
+		expect(deserializeBlock(raw).type).toBe('line');
+	});
+
+	it('round-trips all four chart types', () => {
+		for (const type of ['bar', 'line', 'pie', 'scatter'] as const) {
+			const state: ModalState = { type, title: '', xAxis: '', tableText: '| a | b |\n| --- | --- |\n| 1 | 2 |' };
+			const raw = serializeBlock(state).replace(/^```fancy-charts\n/, '').replace(/\n```$/, '');
+			expect(deserializeBlock(raw).type).toBe(type);
+		}
+	});
+
+	it('recovers title from a serialized block', () => {
+		const state: ModalState = { type: 'bar', title: 'My Chart', xAxis: '', tableText: '| a | b |\n| --- | --- |\n| 1 | 2 |' };
+		const raw = serializeBlock(state).replace(/^```fancy-charts\n/, '').replace(/\n```$/, '');
+		expect(deserializeBlock(raw).title).toBe('My Chart');
+	});
+
+	it('recovers xAxis from a serialized block', () => {
+		const state: ModalState = { type: 'bar', title: '', xAxis: 'quarter', tableText: '| quarter | sales |\n| --- | --- |\n| Q1 | 10 |' };
+		const raw = serializeBlock(state).replace(/^```fancy-charts\n/, '').replace(/\n```$/, '');
+		expect(deserializeBlock(raw).xAxis).toBe('quarter');
+	});
+
+	it('recovers tableText from a serialized block', () => {
+		const tableText = '| quarter | sales |\n| --- | --- |\n| Q1 | 10 |';
+		const state: ModalState = { type: 'bar', title: '', xAxis: '', tableText };
+		const raw = serializeBlock(state).replace(/^```fancy-charts\n/, '').replace(/\n```$/, '');
+		expect(deserializeBlock(raw).tableText).toBe(tableText);
+	});
+
+	it('falls back to empty string when title is absent', () => {
+		const state: ModalState = { type: 'bar', title: '', xAxis: '', tableText: '| a | b |\n| --- | --- |\n| 1 | 2 |' };
+		const raw = serializeBlock(state).replace(/^```fancy-charts\n/, '').replace(/\n```$/, '');
+		expect(deserializeBlock(raw).title).toBe('');
+	});
+
+	it('falls back to empty string when xAxis is absent', () => {
+		const state: ModalState = { type: 'bar', title: '', xAxis: '', tableText: '| a | b |\n| --- | --- |\n| 1 | 2 |' };
+		const raw = serializeBlock(state).replace(/^```fancy-charts\n/, '').replace(/\n```$/, '');
+		expect(deserializeBlock(raw).xAxis).toBe('');
+	});
+
+	it('falls back to bar when type is unknown', () => {
+		expect(deserializeBlock('type: unknown\n---\n| a | b |\n| --- | --- |\n| 1 | 2 |').type).toBe('bar');
+	});
+
+	it('falls back to DEFAULT_STATE on missing delimiter', () => {
+		const result = deserializeBlock('no delimiter here');
+		expect(result.type).toBe('bar');
+	});
+});
+
+describe('FancyChartsModal — pre-fill from initialState', () => {
+	const editState: ModalState = {
+		type: 'pie',
+		title: 'Revenue Breakdown',
+		xAxis: 'category',
+		tableText: '| category | revenue |\n| --- | --- |\n| A | 50 |\n| B | 50 |',
+	};
+
+	function openWithState() {
+		const modal = new FancyChartsModal({} as never, vi.fn(), editState);
+		modal.onOpen();
+		return modal;
+	}
+
+	it('pre-selects the correct chart type', () => {
+		const modal = openWithState();
+		const select = modal.contentEl.querySelector('select') as HTMLSelectElement;
+		expect(select.value).toBe('pie');
+	});
+
+	it('pre-fills the title input', () => {
+		const modal = openWithState();
+		const titleInput = modal.contentEl.querySelectorAll('input[type="text"]')[0] as HTMLInputElement;
+		expect(titleInput.value).toBe('Revenue Breakdown');
+	});
+
+	it('pre-fills the xAxis input', () => {
+		const modal = openWithState();
+		const xAxisInput = modal.contentEl.querySelectorAll('input[type="text"]')[1] as HTMLInputElement;
+		expect(xAxisInput.value).toBe('category');
+	});
+
+	it('pre-fills the table editor with the correct first header', () => {
+		const modal = openWithState();
+		const firstHeader = modal.contentEl.querySelector('.fc-table-editor thead input') as HTMLInputElement;
+		expect(firstHeader.value).toBe('category');
+	});
+
+	it('Insert button serializes the pre-filled state', () => {
+		const onConfirm = vi.fn();
+		const modal = new FancyChartsModal({} as never, onConfirm, editState);
+		modal.onOpen();
+		const insertBtn = Array.from(modal.contentEl.querySelectorAll('button'))
+			.find(b => b.textContent === 'Insert') as HTMLButtonElement;
+		insertBtn.click();
+		expect(onConfirm.mock.calls[0][0]).toContain('type: pie');
+		expect(onConfirm.mock.calls[0][0]).toContain('title: Revenue Breakdown');
 	});
 });

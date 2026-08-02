@@ -34,6 +34,7 @@ export class TableEditor {
 		this.el.className = 'fc-table-editor';
 		this.container.appendChild(this.el);
 		this.render();
+		this.bindKeyboard();
 	}
 
 	getValue(): string {
@@ -89,7 +90,6 @@ export class TableEditor {
 		this.el.appendChild(wrapper);
 
 		this.el.appendChild(this.makeToolbar());
-		this.bindKeyboard();
 	}
 
 	private makeInput(value: string, placeholder: string, onInput: (val: string) => void): HTMLInputElement {
