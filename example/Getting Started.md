@@ -9,3 +9,4 @@ To set up:
 4. Enable **Fancy Charts** in Settings → Community Plugins
 
 Chart examples will be added here as units are completed.
+

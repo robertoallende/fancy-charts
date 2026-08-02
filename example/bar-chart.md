@@ -23,8 +23,6 @@ Single series using explicit `yAxis`:
 type: bar
 title: Sales Only
 xAxis: quarter
-yAxis:
-  - sales
 ---
 | quarter | sales | profit |
 | --- | --- | --- |
@@ -32,4 +30,6 @@ yAxis:
 | Q2 | 200 | 50 |
 | Q3 | 150 | 35 |
 | Q4 | 180 | 45 |
+| Q5 | 200 | 10 |
 ```
+
