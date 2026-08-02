@@ -2,7 +2,7 @@
 set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-VAULT_PLUGIN_DIR="$REPO_DIR/example/.obsidian/plugins/fancy-charts"
+VAULT_PLUGIN_DIR="$REPO_DIR/.obsidian/plugins/fancy-charts"
 
 mkdir -p "$VAULT_PLUGIN_DIR"
 
