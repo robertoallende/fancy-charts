@@ -180,16 +180,21 @@ function buildSankeyOption(config: SimpleConfig, table: TableData): Record<strin
 	const nodes     = nodeNames.map(name => ({ name }));
 	const links     = table.rows.map(r => ({ source: r[0], target: r[1], value: Number(r[2]) }));
 
-	const option: Record<string, unknown> = {
-		tooltip: { trigger: 'item' },
-		series: [{
-			type: 'sankey',
-			nodes,
-			links,
-			emphasis: { focus: 'adjacency' },
-		}],
+	const series: Record<string, unknown> = {
+		type: 'sankey',
+		nodes,
+		links,
+		emphasis: { focus: 'adjacency' },
 	};
 
-	if (config.title) option.title = { text: config.title };
+	const option: Record<string, unknown> = {
+		tooltip: { trigger: 'item' },
+		series: [series],
+	};
+
+	if (config.title) {
+		option.title = { text: config.title, left: 'center' };
+		series.top = 30;
+	}
 	return option;
 }
