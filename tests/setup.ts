@@ -1,6 +1,18 @@
+import { vi } from 'vitest';
+
 if (typeof document !== "undefined") {
   Object.assign(globalThis, { activeDocument: document });
 }
+
+// ResizeObserver is not available in jsdom — stub with vi.fn() so tests can track calls
+global.ResizeObserver = vi.fn().mockImplementation(function (
+  this: { observe: ReturnType<typeof vi.fn>; unobserve: ReturnType<typeof vi.fn>; disconnect: ReturnType<typeof vi.fn> },
+  _callback: ResizeObserverCallback,
+) {
+  this.observe    = vi.fn();
+  this.unobserve  = vi.fn();
+  this.disconnect = vi.fn();
+}) as unknown as typeof ResizeObserver;
 
 type CreateElOptions = {
   cls?: string | string[];

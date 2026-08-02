@@ -4,6 +4,7 @@ import { ChartRenderer } from '../render/renderer';
 
 export class FancyChartsRenderChild extends MarkdownRenderChild {
 	private renderer: ChartRenderer | null = null;
+	private observer: ResizeObserver | null = null;
 
 	constructor(containerEl: HTMLElement, private source: string) {
 		super(containerEl);
@@ -17,9 +18,14 @@ export class FancyChartsRenderChild extends MarkdownRenderChild {
 		}
 		this.renderer = new ChartRenderer(this.containerEl);
 		this.renderer.render(result.option);
+
+		this.observer = new ResizeObserver(() => this.renderer?.resize());
+		this.observer.observe(this.containerEl);
 	}
 
 	onunload(): void {
+		this.observer?.disconnect();
+		this.observer = null;
 		this.renderer?.dispose();
 		this.renderer = null;
 	}

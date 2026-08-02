@@ -58,6 +58,54 @@ describe('FancyChartsRenderChild — successful parse', () => {
 	});
 });
 
+describe('FancyChartsRenderChild — resize wiring', () => {
+	const option = { series: [{ type: 'bar' }] };
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const MockRO = global.ResizeObserver as unknown as { mock: { instances: any[]; calls: any[] } };
+
+	beforeEach(() => {
+		mockParse.mockReturnValue({ ok: true, mode: 'simple', option });
+	});
+
+	it('constructs a ResizeObserver and observes the container on onload', () => {
+		const { child, container } = makeChild();
+		child.onload();
+		expect(MockRO.mock.instances[0].observe).toHaveBeenCalledWith(container);
+	});
+
+	it('calls renderer.resize() when ResizeObserver callback fires', () => {
+		const { child } = makeChild();
+		child.onload();
+		const callback = MockRO.mock.calls[0][0] as ResizeObserverCallback;
+		callback([], {} as ResizeObserver);
+		expect(mockRenderer.resize).toHaveBeenCalled();
+	});
+
+	it('calls observer.disconnect() before renderer.dispose() on onunload', () => {
+		const { child } = makeChild();
+		child.onload();
+		const instance = MockRO.mock.instances[0];
+		child.onunload();
+		expect(instance.disconnect).toHaveBeenCalled();
+		expect(mockRenderer.dispose).toHaveBeenCalled();
+	});
+
+	it('does not construct ResizeObserver when parse fails', () => {
+		mockParse.mockReturnValue({ ok: false, error: 'bad input' });
+		const { child } = makeChild();
+		const before = MockRO.mock.instances.length;
+		child.onload();
+		expect(MockRO.mock.instances.length).toBe(before);
+	});
+
+	it('does not throw on onunload when no observer was created', () => {
+		mockParse.mockReturnValue({ ok: false, error: 'bad' });
+		const { child } = makeChild();
+		child.onload();
+		expect(() => child.onunload()).not.toThrow();
+	});
+});
+
 describe('FancyChartsRenderChild — failed parse', () => {
 	beforeEach(() => {
 		mockParse.mockReturnValue({ ok: false, error: 'Unknown chart type' });
