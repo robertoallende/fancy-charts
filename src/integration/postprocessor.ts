@@ -5,6 +5,7 @@ import { ChartRenderer } from '../render/renderer';
 export class FancyChartsRenderChild extends MarkdownRenderChild {
 	private renderer: ChartRenderer | null = null;
 	private observer: ResizeObserver | null = null;
+	private chartEl: HTMLElement | null = null;
 
 	constructor(containerEl: HTMLElement, private source: string) {
 		super(containerEl);
@@ -16,11 +17,12 @@ export class FancyChartsRenderChild extends MarkdownRenderChild {
 			this.renderError(result.error);
 			return;
 		}
-		this.renderer = new ChartRenderer(this.containerEl);
+		this.chartEl = this.containerEl.createDiv({ cls: 'fancy-charts-block' });
+		this.renderer = new ChartRenderer(this.chartEl);
 		this.renderer.render(result.option);
 
 		this.observer = new ResizeObserver(() => this.renderer?.resize());
-		this.observer.observe(this.containerEl);
+		this.observer.observe(this.chartEl);
 	}
 
 	onunload(): void {
@@ -28,6 +30,7 @@ export class FancyChartsRenderChild extends MarkdownRenderChild {
 		this.observer = null;
 		this.renderer?.dispose();
 		this.renderer = null;
+		this.chartEl = null;
 	}
 
 	private renderError(message: string): void {

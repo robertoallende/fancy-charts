@@ -1,1 +1,13 @@
 /* Fancy Charts styles */
+
+.fancy-charts-block {
+  width: 100%;
+  height: 300px;
+}
+
+.fc-error {
+  padding: 8px 12px;
+  border-left: 3px solid var(--color-red);
+  color: var(--text-muted);
+  font-size: var(--font-ui-small);
+}

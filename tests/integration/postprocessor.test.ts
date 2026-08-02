@@ -32,10 +32,12 @@ describe('FancyChartsRenderChild — successful parse', () => {
 		mockParse.mockReturnValue({ ok: true, mode: 'simple', option });
 	});
 
-	it('constructs ChartRenderer with the container element on onload', () => {
+	it('constructs ChartRenderer with a .fancy-charts-block div on onload', () => {
 		const { child, container } = makeChild();
 		child.onload();
-		expect(MockChartRenderer).toHaveBeenCalledWith(container);
+		const chartEl = container.querySelector('.fancy-charts-block');
+		expect(chartEl).not.toBeNull();
+		expect(MockChartRenderer).toHaveBeenCalledWith(chartEl);
 	});
 
 	it('calls renderer.render() with the parsed option', () => {
@@ -67,10 +69,11 @@ describe('FancyChartsRenderChild — resize wiring', () => {
 		mockParse.mockReturnValue({ ok: true, mode: 'simple', option });
 	});
 
-	it('constructs a ResizeObserver and observes the container on onload', () => {
+	it('constructs a ResizeObserver and observes the chart div on onload', () => {
 		const { child, container } = makeChild();
 		child.onload();
-		expect(MockRO.mock.instances[0].observe).toHaveBeenCalledWith(container);
+		const chartEl = container.querySelector('.fancy-charts-block');
+		expect(MockRO.mock.instances[0].observe).toHaveBeenCalledWith(chartEl);
 	});
 
 	it('calls renderer.resize() when ResizeObserver callback fires', () => {
