@@ -2,21 +2,23 @@ import { buildEChartsTheme, FALLBACK_PALETTE } from '../../src/theme/theme-build
 import type { ObsidianThemeVars } from '../../src/theme/theme-vars';
 
 const lightVars: ObsidianThemeVars = {
-	backgroundPrimary: '#ffffff',
-	textNormal:        '#262626',
-	textMuted:         '#888888',
-	colorAccent:       '#7c3aed',
-	fontInterface:     'Inter, sans-serif',
-	fontUiSmall:       '12px',
+	backgroundPrimary:        '#ffffff',
+	backgroundModifierBorder: '#e0e0e0',
+	textNormal:               '#262626',
+	textMuted:                '#888888',
+	colorAccent:              '#7c3aed',
+	fontInterface:            'Inter, sans-serif',
+	fontUiSmall:              '12px',
 };
 
 const darkVars: ObsidianThemeVars = {
-	backgroundPrimary: '#1e1e1e',
-	textNormal:        '#dcddde',
-	textMuted:         '#888888',
-	colorAccent:       '#a78bfa',
-	fontInterface:     'Inter, sans-serif',
-	fontUiSmall:       '12px',
+	backgroundPrimary:        '#1e1e1e',
+	backgroundModifierBorder: '#3d3d3d',
+	textNormal:               '#dcddde',
+	textMuted:                '#888888',
+	colorAccent:              '#a78bfa',
+	fontInterface:            'Inter, sans-serif',
+	fontUiSmall:              '12px',
 };
 
 describe('buildEChartsTheme', () => {
@@ -45,12 +47,12 @@ describe('buildEChartsTheme', () => {
 		expect(valLabel.color).toBe('#262626');
 	});
 
-	it('sets grid line color from textMuted', () => {
+	it('sets grid line color from backgroundModifierBorder', () => {
 		const theme = buildEChartsTheme(lightVars);
 		const cat = theme.categoryAxis as Record<string, unknown>;
 		const splitLine = (cat.splitLine as Record<string, unknown>);
 		const lineStyle = (splitLine.lineStyle as Record<string, unknown>);
-		expect(lineStyle.color).toBe('#888888');
+		expect(lineStyle.color).toBe('#e0e0e0');
 	});
 
 	it('sets tooltip background from backgroundPrimary', () => {

@@ -15,7 +15,7 @@ export function buildEChartsTheme(vars: ObsidianThemeVars): Record<string, unkno
 		: FALLBACK_PALETTE;
 
 	const axisLabel = { color: vars.textNormal };
-	const splitLine = { lineStyle: { color: vars.textMuted } };
+	const splitLine = { lineStyle: { color: vars.backgroundModifierBorder } };
 	const axis = { axisLabel, splitLine };
 
 	return {
