@@ -121,11 +121,11 @@ describe('buildOption — pie', () => {
 		expect((option.legend as Record<string, unknown>).bottom).toBe(10);
 	});
 
-	it('renders labels inside slices', () => {
+	it('hides slice labels', () => {
 		const config: SimpleConfig = { type: 'pie', xAxis: 'quarter' };
 		const option = buildOption(config, basicTable);
 		const series = (option.series as Record<string, unknown>[])[0];
-		expect((series.label as Record<string, unknown>).position).toBe('inside');
+		expect((series.label as Record<string, unknown>).show).toBe(false);
 	});
 
 	it('uses first column as xAxis when xAxis is omitted', () => {

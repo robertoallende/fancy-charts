@@ -54,7 +54,7 @@ function buildPieOption(config: SimpleConfig, table: TableData): Record<string, 
 		series: [{
 			type: 'pie',
 			encode: { itemName: xAxisCol, value: valueCol },
-			label: { position: 'inside', formatter: '{d}%' },
+			label: { show: false },
 		}],
 	};
 
