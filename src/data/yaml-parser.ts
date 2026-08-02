@@ -4,18 +4,20 @@ import type { ChartMode } from '../model/chart';
 const DELIMITER = /^---$/m;
 
 export function splitSource(source: string): { yaml: string; rest: string } | { error: string } {
-	const match = source.match(DELIMITER);
+	// Strip optional leading --- (front-matter style: ---\nYAML\n---\nTABLE)
+	const normalized = source.replace(/^---\r?\n/, '');
+	const match = normalized.match(DELIMITER);
 	if (match && match.index !== undefined) {
 		return {
-			yaml: source.slice(0, match.index).trim(),
-			rest: source.slice(match.index + 3).trim(),
+			yaml: normalized.slice(0, match.index).trim(),
+			rest: normalized.slice(match.index + 3).trim(),
 		};
 	}
 
 	// No delimiter — valid only for advanced mode (echarts: key present)
-	const parsed = parseYaml(source.trim());
+	const parsed = parseYaml(normalized.trim());
 	if (!('error' in parsed) && 'echarts' in parsed) {
-		return { yaml: source.trim(), rest: '' };
+		return { yaml: normalized.trim(), rest: '' };
 	}
 
 	return { error: 'Missing --- delimiter. Add --- between the config and the table, or use an echarts: key for advanced mode.' };

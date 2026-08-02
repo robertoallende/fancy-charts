@@ -25,6 +25,32 @@ title: My Chart
 		expect(yaml).toContain('echarts:');
 	});
 
+	it('handles front-matter style with leading ---', () => {
+		const source = `---
+type: bar
+title: My Chart
+---
+| quarter | sales |
+| --- | --- |
+| Q1 | 120 |`;
+		const result = splitSource(source);
+		expect('error' in result).toBe(false);
+		const { yaml, rest } = result as { yaml: string; rest: string };
+		expect(yaml).toContain('type: bar');
+		expect(rest).toContain('| quarter | sales |');
+	});
+
+	it('handles front-matter advanced mode with leading ---', () => {
+		const source = `---
+echarts:
+  xAxis:
+    type: category`;
+		const result = splitSource(source);
+		expect('error' in result).toBe(false);
+		const { yaml } = result as { yaml: string; rest: string };
+		expect(yaml).toContain('echarts:');
+	});
+
 	it('returns error when no --- delimiter and no echarts key', () => {
 		const source = `type: bar
 title: My Chart`;
