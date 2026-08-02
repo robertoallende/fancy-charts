@@ -4,6 +4,7 @@ export function buildOption(config: SimpleConfig, table: TableData): Record<stri
 	const { type } = config;
 	if (type === 'pie') return buildPieOption(config, table);
 	if (type === 'scatter') return buildScatterOption(config, table);
+	if (type === 'area') return buildAreaOption(config, table);
 	return buildCartesianOption(config, table);
 }
 
@@ -56,6 +57,36 @@ function buildPieOption(config: SimpleConfig, table: TableData): Record<string, 
 			encode: { itemName: xAxisCol, value: valueCol },
 			label: { show: false },
 		}],
+	};
+
+	if (config.title) option.title = { text: config.title };
+	return option;
+}
+
+function buildAreaOption(config: SimpleConfig, table: TableData): Record<string, unknown> {
+	const xAxisCol = config.xAxis ?? table.headers[0];
+	const seriesCols = config.yAxis ?? table.headers.filter(h => h !== xAxisCol);
+
+	const option: Record<string, unknown> = {
+		tooltip: { trigger: 'axis' },
+		legend: { data: seriesCols, bottom: 10 },
+		grid: { bottom: 60 },
+		dataset: {
+			source: [
+				table.headers,
+				...table.rows,
+			],
+		},
+		xAxis: { type: 'category', boundaryGap: false },
+		yAxis: { type: 'value' },
+		series: seriesCols.map(col => ({
+			type: 'line',
+			name: col,
+			stack: 'Total',
+			areaStyle: {},
+			emphasis: { focus: 'series' },
+			encode: { x: xAxisCol, y: col },
+		})),
 	};
 
 	if (config.title) option.title = { text: config.title };

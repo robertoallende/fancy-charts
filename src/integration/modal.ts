@@ -10,7 +10,7 @@ import { TableEditor } from './table-editor';
 
 export interface ModalState {
 	mode?: 'simple' | 'advanced';
-	type: 'bar' | 'line' | 'pie' | 'scatter';
+	type: 'bar' | 'line' | 'pie' | 'scatter' | 'area';
 	title: string;
 	xAxis: string;
 	tableText: string;
@@ -25,6 +25,12 @@ export const DEFAULT_STATE: ModalState = {
 };
 
 const SCATTER_TABLE = '| x | y |\n| --- | --- |\n| 1 | 5 |\n| 3 | 8 |\n| 5 | 2 |';
+const AREA_TABLE    = '| month | series A | series B |\n| --- | --- | --- |\n| Jan | 120 | 220 |\n| Feb | 132 | 182 |\n| Mar | 101 | 191 |';
+
+const TYPE_DEFAULTS: Partial<Record<ModalState['type'], string>> = {
+	scatter: SCATTER_TABLE,
+	area:    AREA_TABLE,
+};
 
 const DEFAULT_ADVANCED_YAML =
 `echarts:
@@ -37,7 +43,7 @@ const DEFAULT_ADVANCED_YAML =
     - type: bar
       data: [10, 20, 30]`;
 
-const CHART_TYPES: ModalState['type'][] = ['bar', 'line', 'pie', 'scatter'];
+const CHART_TYPES: ModalState['type'][] = ['bar', 'line', 'pie', 'scatter', 'area'];
 const THEME_LIGHT = 'fancy-charts-light';
 const THEME_DARK  = 'fancy-charts-dark';
 const DEBOUNCE_MS = 300;
@@ -51,7 +57,7 @@ export function serializeBlock(state: ModalState): string {
 	return `\`\`\`fancy-charts\n${inner}\n\`\`\``;
 }
 
-const VALID_TYPES: ReadonlyArray<ModalState['type']> = ['bar', 'line', 'pie', 'scatter'];
+const VALID_TYPES: ReadonlyArray<ModalState['type']> = ['bar', 'line', 'pie', 'scatter', 'area'];
 
 export function deserializeBlock(raw: string): ModalState {
 	const split = splitSource(raw);
@@ -167,11 +173,10 @@ export class FancyChartsModal extends Modal {
 				const prev = this.state.type;
 				this.state.type = select.value as ModalState['type'];
 
-				if (this.state.type === 'scatter' && this.state.tableText === DEFAULT_STATE.tableText) {
-					this.state.tableText = SCATTER_TABLE;
-					this.refreshForm();
-				} else if (prev === 'scatter' && this.state.tableText === SCATTER_TABLE) {
-					this.state.tableText = DEFAULT_STATE.tableText;
+				const prevDefault = TYPE_DEFAULTS[prev] ?? DEFAULT_STATE.tableText;
+				const nextDefault = TYPE_DEFAULTS[this.state.type] ?? DEFAULT_STATE.tableText;
+				if (prevDefault !== nextDefault && this.state.tableText === prevDefault) {
+					this.state.tableText = nextDefault;
 					this.refreshForm();
 				}
 

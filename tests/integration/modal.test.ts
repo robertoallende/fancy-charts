@@ -107,7 +107,7 @@ describe('FancyChartsModal — form rendering', () => {
 		return modal;
 	}
 
-	it('renders a select for chart type with all four options', () => {
+	it('renders a select for chart type with all options', () => {
 		const modal = openModal();
 		const select = modal.contentEl.querySelector('select') as HTMLSelectElement;
 		expect(select).not.toBeNull();
@@ -116,6 +116,7 @@ describe('FancyChartsModal — form rendering', () => {
 		expect(values).toContain('line');
 		expect(values).toContain('pie');
 		expect(values).toContain('scatter');
+		expect(values).toContain('area');
 	});
 
 	it('renders a title text input', () => {
@@ -261,8 +262,8 @@ describe('deserializeBlock', () => {
 		expect(deserializeBlock(raw).type).toBe('line');
 	});
 
-	it('round-trips all four chart types', () => {
-		for (const type of ['bar', 'line', 'pie', 'scatter'] as const) {
+	it('round-trips all chart types', () => {
+		for (const type of ['bar', 'line', 'pie', 'scatter', 'area'] as const) {
 			const state: ModalState = { type, title: '', xAxis: '', tableText: '| a | b |\n| --- | --- |\n| 1 | 2 |' };
 			const raw = serializeBlock(state).replace(/^```fancy-charts\n/, '').replace(/\n```$/, '');
 			expect(deserializeBlock(raw).type).toBe(type);

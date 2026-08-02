@@ -136,6 +136,44 @@ describe('buildOption — pie', () => {
 	});
 });
 
+describe('buildOption — area', () => {
+	it('produces line series with stack and areaStyle', () => {
+		const config: SimpleConfig = { type: 'area', xAxis: 'quarter' };
+		const option = buildOption(config, basicTable);
+		const series = option.series as Record<string, unknown>[];
+		expect(series[0].type).toBe('line');
+		expect(series[0].stack).toBe('Total');
+		expect(series[0].areaStyle).toBeDefined();
+	});
+
+	it('creates one series per non-xAxis column', () => {
+		const config: SimpleConfig = { type: 'area', xAxis: 'quarter' };
+		const option = buildOption(config, basicTable);
+		const series = option.series as Record<string, unknown>[];
+		expect(series).toHaveLength(2);
+		expect((series[0].encode as Record<string, string>).y).toBe('sales');
+		expect((series[1].encode as Record<string, string>).y).toBe('profit');
+	});
+
+	it('sets xAxis boundaryGap to false', () => {
+		const config: SimpleConfig = { type: 'area', xAxis: 'quarter' };
+		const option = buildOption(config, basicTable);
+		expect((option.xAxis as Record<string, unknown>).boundaryGap).toBe(false);
+	});
+
+	it('positions legend at the bottom', () => {
+		const config: SimpleConfig = { type: 'area', xAxis: 'quarter' };
+		const option = buildOption(config, basicTable);
+		expect((option.legend as Record<string, unknown>).bottom).toBe(10);
+	});
+
+	it('includes title when provided', () => {
+		const config: SimpleConfig = { type: 'area', xAxis: 'quarter', title: 'Trends' };
+		const option = buildOption(config, basicTable);
+		expect((option.title as Record<string, unknown>).text).toBe('Trends');
+	});
+});
+
 describe('buildOption — scatter', () => {
 	it('builds a scatter chart with correct series type', () => {
 		const config: SimpleConfig = { type: 'scatter', xAxis: 'quarter' };
