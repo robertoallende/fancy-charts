@@ -115,10 +115,17 @@ describe('buildOption — pie', () => {
 		expect(option.title).toBeUndefined();
 	});
 
-	it('positions legend at the top', () => {
+	it('positions legend at the bottom', () => {
 		const config: SimpleConfig = { type: 'pie', xAxis: 'quarter' };
 		const option = buildOption(config, basicTable);
-		expect((option.legend as Record<string, unknown>).top).toBe(0);
+		expect((option.legend as Record<string, unknown>).bottom).toBe(10);
+	});
+
+	it('renders labels inside slices', () => {
+		const config: SimpleConfig = { type: 'pie', xAxis: 'quarter' };
+		const option = buildOption(config, basicTable);
+		const series = (option.series as Record<string, unknown>[])[0];
+		expect((series.label as Record<string, unknown>).position).toBe('inside');
 	});
 
 	it('uses first column as xAxis when xAxis is omitted', () => {

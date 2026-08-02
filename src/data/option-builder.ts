@@ -40,7 +40,7 @@ function buildPieOption(config: SimpleConfig, table: TableData): Record<string, 
 
 	const option: Record<string, unknown> = {
 		tooltip: { trigger: 'item' },
-		legend: { top: 0 },
+		legend: { bottom: 10 },
 		dataset: {
 			source: [
 				[xAxisCol, valueCol],
@@ -54,6 +54,7 @@ function buildPieOption(config: SimpleConfig, table: TableData): Record<string, 
 		series: [{
 			type: 'pie',
 			encode: { itemName: xAxisCol, value: valueCol },
+			label: { position: 'inside', formatter: '{d}%' },
 		}],
 	};
 
