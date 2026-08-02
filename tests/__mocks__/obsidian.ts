@@ -42,6 +42,22 @@ export class MarkdownRenderChild {
   onunload(): void {}
 }
 
+export class Modal {
+  titleEl: HTMLElement = document.createElement('div');
+  contentEl: HTMLDivElement & { empty(): void };
+  app: unknown;
+  constructor(app: unknown) {
+    this.app = app;
+    const el = document.createElement('div') as HTMLDivElement & { empty(): void };
+    el.empty = () => { el.innerHTML = ''; };
+    this.contentEl = el;
+  }
+  open(): void {}
+  close(): void {}
+  onOpen(): void {}
+  onClose(): void {}
+}
+
 export class Plugin {
   async loadData(): Promise<Record<string, unknown>> { return {}; }
   async saveData(_data: unknown): Promise<void> {}
