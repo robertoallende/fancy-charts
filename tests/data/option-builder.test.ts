@@ -115,10 +115,10 @@ describe('buildOption — pie', () => {
 		expect(option.title).toBeUndefined();
 	});
 
-	it('positions legend at the bottom', () => {
+	it('positions legend at the top', () => {
 		const config: SimpleConfig = { type: 'pie', xAxis: 'quarter' };
 		const option = buildOption(config, basicTable);
-		expect((option.legend as Record<string, unknown>).bottom).toBe(10);
+		expect((option.legend as Record<string, unknown>).top).toBe(0);
 	});
 
 	it('uses first column as xAxis when xAxis is omitted', () => {

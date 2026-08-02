@@ -40,7 +40,7 @@ function buildPieOption(config: SimpleConfig, table: TableData): Record<string, 
 
 	const option: Record<string, unknown> = {
 		tooltip: { trigger: 'item' },
-		legend: { bottom: 10 },
+		legend: { top: 0 },
 		dataset: {
 			source: [
 				[xAxisCol, valueCol],
