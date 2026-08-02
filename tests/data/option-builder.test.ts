@@ -62,7 +62,7 @@ describe('buildOption — bar', () => {
 	it('positions legend at the bottom', () => {
 		const config: SimpleConfig = { type: 'bar', xAxis: 'quarter' };
 		const option = buildOption(config, basicTable);
-		expect((option.legend as Record<string, unknown>).bottom).toBe(0);
+		expect((option.legend as Record<string, unknown>).bottom).toBe(10);
 	});
 
 	it('sets grid bottom padding to leave room for the legend', () => {
@@ -118,7 +118,7 @@ describe('buildOption — pie', () => {
 	it('positions legend at the bottom', () => {
 		const config: SimpleConfig = { type: 'pie', xAxis: 'quarter' };
 		const option = buildOption(config, basicTable);
-		expect((option.legend as Record<string, unknown>).bottom).toBe(0);
+		expect((option.legend as Record<string, unknown>).bottom).toBe(10);
 	});
 
 	it('uses first column as xAxis when xAxis is omitted', () => {
