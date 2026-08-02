@@ -1,0 +1,28 @@
+{
+  "name": "fancy-charts",
+  "version": "0.1.0",
+  "description": "Interactive charts inside any note, powered by ECharts.",
+  "main": "main.js",
+  "scripts": {
+    "dev": "node esbuild.config.mjs",
+    "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "keywords": [],
+  "author": "Roberto Allende",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jsdom": "^28.0.3",
+    "@types/node": "^22.0.0",
+    "@vitest/coverage-istanbul": "^4.1.10",
+    "echarts": "^5.5.0",
+    "esbuild": "0.21.5",
+    "jsdom": "^29.1.1",
+    "obsidian": "latest",
+    "tslib": "2.6.0",
+    "typescript": "^7.0.0",
+    "vitest": "^4.1.10"
+  }
+}

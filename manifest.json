@@ -1,0 +1,12 @@
+{
+  "id": "fancy-charts",
+  "name": "Fancy Charts",
+  "version": "0.1.0",
+  "minAppVersion": "1.7.2",
+  "description": "Interactive charts inside any note, powered by ECharts.",
+  "author": "Roberto Allende",
+  "isDesktopOnly": false,
+  "fundingUrl": {
+    "GitHub Sponsors": "https://github.com/sponsors/robertoallende"
+  }
+}

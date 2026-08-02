@@ -1,0 +1,7 @@
+dev_log/
+node_modules/
+main.js
+main.js.map
+*.js.map
+coverage/
+.obsidian/
