@@ -348,12 +348,12 @@ describe('FancyChartsModal — pre-fill from initialState', () => {
 		expect(firstHeader.value).toBe('category');
 	});
 
-	it('Insert button serializes the pre-filled state', () => {
+	it('Update button serializes the pre-filled state', () => {
 		const onConfirm = vi.fn();
 		const modal = new FancyChartsModal({} as never, onConfirm, editState);
 		modal.onOpen();
 		const insertBtn = Array.from(modal.contentEl.querySelectorAll('button'))
-			.find(b => b.textContent === 'Insert') as HTMLButtonElement;
+			.find(b => b.textContent === 'Update') as HTMLButtonElement;
 		insertBtn.click();
 		expect(onConfirm.mock.calls[0][0]).toContain('type: pie');
 		expect(onConfirm.mock.calls[0][0]).toContain('title: Revenue Breakdown');

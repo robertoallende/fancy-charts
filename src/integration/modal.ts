@@ -77,6 +77,7 @@ export function deserializeBlock(raw: string): ModalState {
 export class FancyChartsModal extends Modal {
 	private state: ModalState;
 	private isAdvancedMode: boolean;
+	private isEditMode: boolean;
 	private advancedYaml: string;
 	private formEl: HTMLElement | null = null;
 	private xAxisInput: HTMLInputElement | null = null;
@@ -91,12 +92,13 @@ export class FancyChartsModal extends Modal {
 		this.state = initialState ? { ...initialState } : { ...DEFAULT_STATE };
 		this.isAdvancedMode = initialState?.mode === 'advanced';
 		this.advancedYaml = initialState?.echartsYaml ?? DEFAULT_ADVANCED_YAML;
+		this.isEditMode = initialState !== undefined;
 	}
 
 	onOpen(): void {
 		const { contentEl } = this;
 		contentEl.empty();
-		this.titleEl.textContent = 'Insert chart';
+		this.titleEl.textContent = this.isEditMode ? 'Edit chart' : 'Insert chart';
 		contentEl.classList.add('fc-modal');
 
 		const layout = contentEl.createDiv({ cls: 'fc-modal-layout' });
@@ -219,7 +221,7 @@ export class FancyChartsModal extends Modal {
 	private renderButtons(container: HTMLElement): void {
 		const row = container.createDiv({ cls: 'fc-modal-buttons' });
 
-		const insertBtn = row.createEl('button', { cls: ['fc-modal-insert', 'mod-cta'], text: 'Insert' });
+		const insertBtn = row.createEl('button', { cls: ['fc-modal-insert', 'mod-cta'], text: this.isEditMode ? 'Update' : 'Insert' });
 		insertBtn.addEventListener('click', () => {
 			this.onConfirm(this.currentBlock());
 			this.close();
