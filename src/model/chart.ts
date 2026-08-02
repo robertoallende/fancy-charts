@@ -1,3 +1,19 @@
-// In-memory types for fancy-charts.
-// ChartOption: fully-formed ECharts option ready to pass to setOption().
-// ParseResult: discriminated union — { ok: true, option } | { ok: false, error }.
+export type ChartMode = 'simple' | 'advanced';
+
+export interface TableData {
+	headers: string[];
+	rows: string[][];
+}
+
+export interface SimpleConfig {
+	type: 'bar' | 'line' | 'pie' | 'scatter';
+	title?: string;
+	xAxis?: string;
+	yAxis?: string[];
+}
+
+export type AdvancedConfig = Record<string, unknown>;
+
+export type ParseResult =
+	| { ok: true; mode: ChartMode; option: Record<string, unknown> }
+	| { ok: false; error: string };
