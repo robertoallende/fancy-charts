@@ -24,6 +24,8 @@ export const DEFAULT_STATE: ModalState = {
 	tableText: '| category | value |\n| --- | --- |\n| A | 10 |\n| B | 20 |',
 };
 
+const SCATTER_TABLE = '| x | y |\n| --- | --- |\n| 1 | 5 |\n| 3 | 8 |\n| 5 | 2 |';
+
 const DEFAULT_ADVANCED_YAML =
 `echarts:
   xAxis:
@@ -136,9 +138,7 @@ export class FancyChartsModal extends Modal {
 		advBtn.addEventListener('click', () => this.switchMode(true));
 	}
 
-	private switchMode(toAdvanced: boolean): void {
-		if (this.isAdvancedMode === toAdvanced) return;
-		this.isAdvancedMode = toAdvanced;
+	private refreshForm(): void {
 		this.tableEditor?.destroy();
 		this.tableEditor = null;
 		this.xAxisInput = null;
@@ -146,6 +146,12 @@ export class FancyChartsModal extends Modal {
 			this.formEl.innerHTML = '';
 			this.renderForm(this.formEl);
 		}
+	}
+
+	private switchMode(toAdvanced: boolean): void {
+		if (this.isAdvancedMode === toAdvanced) return;
+		this.isAdvancedMode = toAdvanced;
+		this.refreshForm();
 		this.schedulePreviewUpdate();
 	}
 
@@ -158,7 +164,17 @@ export class FancyChartsModal extends Modal {
 				if (t === this.state.type) opt.selected = true;
 			}
 			select.addEventListener('change', () => {
+				const prev = this.state.type;
 				this.state.type = select.value as ModalState['type'];
+
+				if (this.state.type === 'scatter' && this.state.tableText === DEFAULT_STATE.tableText) {
+					this.state.tableText = SCATTER_TABLE;
+					this.refreshForm();
+				} else if (prev === 'scatter' && this.state.tableText === SCATTER_TABLE) {
+					this.state.tableText = DEFAULT_STATE.tableText;
+					this.refreshForm();
+				}
+
 				this.schedulePreviewUpdate();
 			});
 		});
