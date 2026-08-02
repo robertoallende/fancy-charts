@@ -124,16 +124,15 @@ describe('FancyChartsModal — form rendering', () => {
 		expect(inputs.length).toBeGreaterThanOrEqual(1);
 	});
 
-	it('renders a textarea for the data table', () => {
+	it('renders a table editor for the data', () => {
 		const modal = openModal();
-		const ta = modal.contentEl.querySelector('textarea');
-		expect(ta).not.toBeNull();
+		expect(modal.contentEl.querySelector('.fc-table-editor')).not.toBeNull();
 	});
 
-	it('textarea is pre-filled with default table', () => {
+	it('table editor is pre-filled with default table columns', () => {
 		const modal = openModal();
-		const ta = modal.contentEl.querySelector('textarea') as HTMLTextAreaElement;
-		expect(ta.value).toContain('| category | value |');
+		const firstHeader = modal.contentEl.querySelector('.fc-table-editor thead input') as HTMLInputElement;
+		expect(firstHeader.value).toBe('category');
 	});
 
 	it('renders Insert and Cancel buttons', () => {
@@ -165,10 +164,10 @@ describe('FancyChartsModal — xAxis auto-detection', () => {
 		xAxisInput.value = '';
 		xAxisInput.dispatchEvent(new Event('input'));
 
-		// Type a table into the textarea
-		const ta = modal.contentEl.querySelector('textarea') as HTMLTextAreaElement;
-		ta.value = '| month | revenue |\n| --- | --- |\n| Jan | 100 |';
-		ta.dispatchEvent(new Event('input'));
+		// Edit the first header in the table editor
+		const firstHeader = modal.contentEl.querySelector('.fc-table-editor thead input') as HTMLInputElement;
+		firstHeader.value = 'month';
+		firstHeader.dispatchEvent(new Event('input'));
 
 		expect(xAxisInput.value).toBe('month');
 	});
@@ -182,9 +181,10 @@ describe('FancyChartsModal — xAxis auto-detection', () => {
 		xAxisInput.value = 'quarter';
 		xAxisInput.dispatchEvent(new Event('input'));
 
-		const ta = modal.contentEl.querySelector('textarea') as HTMLTextAreaElement;
-		ta.value = '| month | revenue |\n| --- | --- |\n| Jan | 100 |';
-		ta.dispatchEvent(new Event('input'));
+		// Edit the first header in the table editor
+		const firstHeader = modal.contentEl.querySelector('.fc-table-editor thead input') as HTMLInputElement;
+		firstHeader.value = 'month';
+		firstHeader.dispatchEvent(new Event('input'));
 
 		expect(xAxisInput.value).toBe('quarter');
 	});
@@ -215,9 +215,13 @@ describe('FancyChartsModal — live preview', () => {
 		const modal = new FancyChartsModal({} as never, vi.fn());
 		modal.onOpen();
 
-		const ta = modal.contentEl.querySelector('textarea') as HTMLTextAreaElement;
-		ta.value = 'not a valid table';
-		ta.dispatchEvent(new Event('input'));
+		// Point xAxis at a column that doesn't exist → parse returns an error
+		const xAxisInput = Array.from(
+			modal.contentEl.querySelectorAll('input[type="text"]'),
+		).at(1) as HTMLInputElement;
+		xAxisInput.value = 'nonexistent-column';
+		xAxisInput.dispatchEvent(new Event('input'));
+
 		vi.advanceTimersByTime(300);
 
 		const errEl = modal.contentEl.querySelector('.fc-modal-preview-error') as HTMLElement;

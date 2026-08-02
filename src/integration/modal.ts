@@ -6,6 +6,7 @@ import { ChartRenderer } from '../render/renderer';
 import { echarts } from '../render/echarts-init';
 import { isDarkMode, readThemeVars } from '../theme/theme-vars';
 import { buildEChartsTheme } from '../theme/theme-builder';
+import { TableEditor } from './table-editor';
 
 export interface ModalState {
 	type: 'bar' | 'line' | 'pie' | 'scatter';
@@ -62,6 +63,7 @@ export class FancyChartsModal extends Modal {
 	private previewChartEl: HTMLElement | null = null;
 	private previewErrorEl: HTMLElement | null = null;
 	private renderer: ChartRenderer | null = null;
+	private tableEditor: TableEditor | null = null;
 	private debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
 	constructor(app: App, private onConfirm: (block: string) => void, initialState?: ModalState) {
@@ -121,12 +123,9 @@ export class FancyChartsModal extends Modal {
 		});
 
 		this.renderField(container, 'Data table', el => {
-			const ta = el.createEl('textarea', { cls: 'fc-modal-textarea' });
-			ta.value = this.state.tableText;
-			ta.rows = 8;
-			ta.addEventListener('input', () => {
-				this.state.tableText = ta.value;
-				this.autoDetectXAxis(ta.value);
+			this.tableEditor = new TableEditor(el, this.state.tableText, (markdown) => {
+				this.state.tableText = markdown;
+				this.autoDetectXAxis(markdown);
 				this.schedulePreviewUpdate();
 			});
 		});
@@ -219,6 +218,8 @@ export class FancyChartsModal extends Modal {
 		}
 		this.renderer?.dispose();
 		this.renderer = null;
+		this.tableEditor?.destroy();
+		this.tableEditor = null;
 		this.contentEl.empty();
 		this.xAxisInput = null;
 		this.previewChartEl = null;
