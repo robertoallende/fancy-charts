@@ -35,7 +35,11 @@ export function buildEChartsTheme(vars: ObsidianThemeVars): Record<string, unkno
 			textStyle: { color: vars.textNormal },
 		},
 		legend: {
+			bottom: 0,
 			textStyle: { color: vars.textNormal },
+		},
+		grid: {
+			bottom: 40,
 		},
 		color: palette,
 	};
