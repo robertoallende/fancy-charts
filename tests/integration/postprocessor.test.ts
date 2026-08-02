@@ -85,6 +85,29 @@ describe('FancyChartsRenderChild — successful parse', () => {
 	});
 });
 
+describe('FancyChartsRenderChild — default height', () => {
+	const option = { series: [{ type: 'bar' }] };
+	beforeEach(() => {
+		mockParse.mockReturnValue({ ok: true, mode: 'simple', option });
+	});
+
+	it('applies defaultHeight as inline style on the chart div', () => {
+		const container = document.createElement('div');
+		const child = new FancyChartsRenderChild(container, 'type: bar', 450);
+		child.onload();
+		const chartEl = container.querySelector('.fancy-charts-block') as HTMLElement;
+		expect(chartEl.style.height).toBe('450px');
+	});
+
+	it('uses 300px when no defaultHeight is provided', () => {
+		const container = document.createElement('div');
+		const child = new FancyChartsRenderChild(container, 'type: bar');
+		child.onload();
+		const chartEl = container.querySelector('.fancy-charts-block') as HTMLElement;
+		expect(chartEl.style.height).toBe('300px');
+	});
+});
+
 describe('FancyChartsRenderChild — theme wiring', () => {
 	const option = { series: [{ type: 'bar' }] };
 	beforeEach(() => {

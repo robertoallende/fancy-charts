@@ -14,7 +14,7 @@ export class FancyChartsRenderChild extends MarkdownRenderChild {
 	private themeObserver: MutationObserver | null = null;
 	private chartEl: HTMLElement | null = null;
 
-	constructor(containerEl: HTMLElement, private source: string) {
+	constructor(containerEl: HTMLElement, private source: string, private defaultHeight = 300) {
 		super(containerEl);
 	}
 
@@ -26,6 +26,7 @@ export class FancyChartsRenderChild extends MarkdownRenderChild {
 		}
 
 		this.chartEl = this.containerEl.createDiv({ cls: 'fancy-charts-block' });
+		this.chartEl.style.height = `${this.defaultHeight}px`;
 		this.initChart(result.option);
 
 		this.resizeObserver = new ResizeObserver(() => this.renderer?.resize());
@@ -65,8 +66,8 @@ export class FancyChartsRenderChild extends MarkdownRenderChild {
 	}
 }
 
-export function registerPostprocessor(plugin: Plugin): void {
+export function registerPostprocessor(plugin: Plugin, getHeight: () => number = () => 300): void {
 	plugin.registerMarkdownCodeBlockProcessor('fancy-charts', (source, el, ctx) => {
-		ctx.addChild(new FancyChartsRenderChild(el, source));
+		ctx.addChild(new FancyChartsRenderChild(el, source, getHeight()));
 	});
 }

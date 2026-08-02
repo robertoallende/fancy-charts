@@ -42,7 +42,14 @@ export class MarkdownRenderChild {
   onunload(): void {}
 }
 
-export class Plugin {}
+export class Plugin {
+  async loadData(): Promise<Record<string, unknown>> { return {}; }
+  async saveData(_data: unknown): Promise<void> {}
+  addSettingTab(_tab: unknown): void {}
+  addRibbonIcon(_icon: string, _tooltip: string, _cb: () => void): HTMLElement { return document.createElement('div'); }
+  addCommand(_cmd: unknown): void {}
+  registerMarkdownCodeBlockProcessor(_type: string, _cb: unknown): void {}
+}
 export class Notice { constructor(_msg: string) {} }
 
 export class PluginSettingTab {
