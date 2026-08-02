@@ -73,6 +73,42 @@ describe('Chart render pipeline', function () {
         });
     });
 
+    describe('funnel chart', function () {
+        before(async function () {
+            await openInPreview('funnel-chart.md');
+        });
+
+        it('renders SVG for a funnel chart', async function () {
+            const svg = await $('.fancy-charts-block svg');
+            await svg.waitForExist({ timeout: 5000 });
+            expect(await svg.isExisting()).toBe(true);
+        });
+    });
+
+    describe('heatmap chart', function () {
+        before(async function () {
+            await openInPreview('heatmap-chart.md');
+        });
+
+        it('renders SVG for a heatmap chart', async function () {
+            const svg = await $('.fancy-charts-block svg');
+            await svg.waitForExist({ timeout: 5000 });
+            expect(await svg.isExisting()).toBe(true);
+        });
+    });
+
+    describe('sankey chart', function () {
+        before(async function () {
+            await openInPreview('sankey-chart.md');
+        });
+
+        it('renders SVG for a sankey chart', async function () {
+            const svg = await $('.fancy-charts-block svg');
+            await svg.waitForExist({ timeout: 5000 });
+            expect(await svg.isExisting()).toBe(true);
+        });
+    });
+
     describe('advanced (ECharts passthrough) chart', function () {
         before(async function () {
             await openInPreview('advanced-chart.md');

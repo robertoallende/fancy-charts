@@ -117,6 +117,9 @@ describe('FancyChartsModal — form rendering', () => {
 		expect(values).toContain('pie');
 		expect(values).toContain('scatter');
 		expect(values).toContain('area');
+		expect(values).toContain('funnel');
+		expect(values).toContain('heatmap');
+		expect(values).toContain('sankey');
 	});
 
 	it('renders a title text input', () => {
@@ -263,7 +266,7 @@ describe('deserializeBlock', () => {
 	});
 
 	it('round-trips all chart types', () => {
-		for (const type of ['bar', 'line', 'pie', 'scatter', 'area'] as const) {
+		for (const type of ['bar', 'line', 'pie', 'scatter', 'area', 'funnel', 'heatmap', 'sankey'] as const) {
 			const state: ModalState = { type, title: '', xAxis: '', tableText: '| a | b |\n| --- | --- |\n| 1 | 2 |' };
 			const raw = serializeBlock(state).replace(/^```fancy-charts\n/, '').replace(/\n```$/, '');
 			expect(deserializeBlock(raw).type).toBe(type);

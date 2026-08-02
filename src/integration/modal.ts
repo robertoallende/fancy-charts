@@ -10,7 +10,7 @@ import { TableEditor } from './table-editor';
 
 export interface ModalState {
 	mode?: 'simple' | 'advanced';
-	type: 'bar' | 'line' | 'pie' | 'scatter' | 'area';
+	type: 'bar' | 'line' | 'pie' | 'scatter' | 'area' | 'funnel' | 'heatmap' | 'sankey';
 	title: string;
 	xAxis: string;
 	tableText: string;
@@ -26,10 +26,16 @@ export const DEFAULT_STATE: ModalState = {
 
 const SCATTER_TABLE = '| x | y |\n| --- | --- |\n| 1 | 5 |\n| 3 | 8 |\n| 5 | 2 |';
 const AREA_TABLE    = '| month | series A | series B |\n| --- | --- | --- |\n| Jan | 120 | 220 |\n| Feb | 132 | 182 |\n| Mar | 101 | 191 |';
+const FUNNEL_TABLE  = '| stage | value |\n| --- | --- |\n| Awareness | 1000 |\n| Interest | 600 |\n| Consideration | 300 |\n| Purchase | 100 |';
+const HEATMAP_TABLE = '| x | y | value |\n| --- | --- | --- |\n| Mon | Morning | 10 |\n| Mon | Afternoon | 25 |\n| Tue | Morning | 15 |\n| Tue | Afternoon | 30 |';
+const SANKEY_TABLE  = '| source | target | value |\n| --- | --- | --- |\n| A | X | 10 |\n| A | Y | 5 |\n| B | X | 8 |\n| B | Y | 12 |';
 
 const TYPE_DEFAULTS: Partial<Record<ModalState['type'], string>> = {
 	scatter: SCATTER_TABLE,
 	area:    AREA_TABLE,
+	funnel:  FUNNEL_TABLE,
+	heatmap: HEATMAP_TABLE,
+	sankey:  SANKEY_TABLE,
 };
 
 const DEFAULT_ADVANCED_YAML =
@@ -43,7 +49,7 @@ const DEFAULT_ADVANCED_YAML =
     - type: bar
       data: [10, 20, 30]`;
 
-const CHART_TYPES: ModalState['type'][] = ['bar', 'line', 'pie', 'scatter', 'area'];
+const CHART_TYPES: ModalState['type'][] = ['bar', 'line', 'pie', 'scatter', 'area', 'funnel', 'heatmap', 'sankey'];
 const THEME_LIGHT = 'fancy-charts-light';
 const THEME_DARK  = 'fancy-charts-dark';
 const DEBOUNCE_MS = 300;
@@ -57,7 +63,7 @@ export function serializeBlock(state: ModalState): string {
 	return `\`\`\`fancy-charts\n${inner}\n\`\`\``;
 }
 
-const VALID_TYPES: ReadonlyArray<ModalState['type']> = ['bar', 'line', 'pie', 'scatter', 'area'];
+const VALID_TYPES: ReadonlyArray<ModalState['type']> = ['bar', 'line', 'pie', 'scatter', 'area', 'funnel', 'heatmap', 'sankey'];
 
 export function deserializeBlock(raw: string): ModalState {
 	const split = splitSource(raw);

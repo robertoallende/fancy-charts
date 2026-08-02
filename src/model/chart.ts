@@ -6,7 +6,7 @@ export interface TableData {
 }
 
 export interface SimpleConfig {
-	type: 'bar' | 'line' | 'pie' | 'scatter' | 'area';
+	type: 'bar' | 'line' | 'pie' | 'scatter' | 'area' | 'funnel' | 'heatmap' | 'sankey';
 	title?: string;
 	xAxis?: string;
 	yAxis?: string[];

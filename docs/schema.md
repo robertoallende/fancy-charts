@@ -88,7 +88,7 @@ When the top-level key `echarts:` is present, the block is treated as advanced m
 
 | Key | Required | Default | Description |
 |-----|----------|---------|-------------|
-| `type` | yes | — | Chart type. One of: `bar`, `line`, `pie`, `scatter`, `area` |
+| `type` | yes | — | Chart type. One of: `bar`, `line`, `pie`, `scatter`, `area`, `funnel`, `heatmap`, `sankey` |
 | `title` | no | none | Chart title displayed above the chart |
 | `xAxis` | no | first column | Column name to use as the category / X axis |
 | `yAxis` | no | all other columns | Ordered list of column names to plot as series |
@@ -108,6 +108,9 @@ Controls the chart type rendered by ECharts. All types share the same table-driv
 | `pie` | Pie chart; `xAxis` column provides slice names, first `yAxis` column provides values |
 | `scatter` | Scatter plot; `xAxis` column provides X values, first `yAxis` column provides Y values |
 | `area` | Stacked area chart; one filled series per `yAxis` column, stacked cumulatively |
+| `funnel` | Funnel chart; `xAxis` column provides stage names, first other column provides values |
+| `heatmap` | Heatmap; first column = X category, second = Y category, third = numeric value; colour scale auto-computed |
+| `sankey` | Sankey flow diagram; first column = source node, second = target node, third = flow value; nodes are derived automatically |
 
 ### Area chart example
 
@@ -125,6 +128,58 @@ xAxis: month
 | Mar | 101 | 191 | 201 |
 | Apr | 134 | 234 | 154 |
 | May | 90 | 290 | 190 |
+```
+````
+
+### Funnel chart example
+
+````markdown
+```fancy-charts
+---
+type: funnel
+title: Sales Funnel
+---
+| stage | value |
+| --- | --- |
+| Awareness | 1000 |
+| Interest | 600 |
+| Consideration | 300 |
+| Purchase | 100 |
+```
+````
+
+### Heatmap example
+
+````markdown
+```fancy-charts
+---
+type: heatmap
+title: Activity by Day and Time
+---
+| day | time | value |
+| --- | --- | --- |
+| Mon | Morning | 10 |
+| Mon | Afternoon | 25 |
+| Tue | Morning | 15 |
+| Tue | Afternoon | 30 |
+```
+````
+
+### Sankey example
+
+````markdown
+```fancy-charts
+---
+type: sankey
+title: Energy Flow
+---
+| source | target | value |
+| --- | --- | --- |
+| Coal | Electricity | 120 |
+| Gas | Electricity | 80 |
+| Renewables | Electricity | 50 |
+| Electricity | Industry | 100 |
+| Electricity | Residential | 90 |
 ```
 ````
 

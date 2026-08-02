@@ -4,16 +4,17 @@ import { parseTable } from './table-parser';
 import { buildOption } from './option-builder';
 import { buildAdvancedOption } from './sanitizer';
 
-const VALID_TYPES = ['bar', 'line', 'pie', 'scatter', 'area'] as const;
+const VALID_TYPES = ['bar', 'line', 'pie', 'scatter', 'area', 'funnel', 'heatmap', 'sankey'] as const;
+const VALID_TYPES_STR = VALID_TYPES.join(', ');
 
 function validateSimpleConfig(
 	raw: Record<string, unknown>,
 	headers: string[],
 ): SimpleConfig | { error: string } {
 	const type = raw['type'];
-	if (!type) return { error: "Missing required field 'type'. Supported types: bar, line, pie, scatter, area." };
+	if (!type) return { error: `Missing required field 'type'. Supported types: ${VALID_TYPES_STR}.` };
 	if (!VALID_TYPES.includes(type as SimpleConfig['type'])) {
-		return { error: `Unknown chart type '${type}'. Supported types: bar, line, pie, scatter, area.` };
+		return { error: `Unknown chart type '${type}'. Supported types: ${VALID_TYPES_STR}.` };
 	}
 
 	const xAxis = raw['xAxis'];
