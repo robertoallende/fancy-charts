@@ -1,5 +1,10 @@
 import { App, Modal } from 'obsidian';
 import { parseTable } from '../data/table-parser';
+import { parse } from '../data/parser';
+import { ChartRenderer } from '../render/renderer';
+import { echarts } from '../render/echarts-init';
+import { isDarkMode, readThemeVars } from '../theme/theme-vars';
+import { buildEChartsTheme } from '../theme/theme-builder';
 
 export interface ModalState {
 	type: 'bar' | 'line' | 'pie' | 'scatter';
@@ -16,6 +21,9 @@ export const DEFAULT_STATE: ModalState = {
 };
 
 const CHART_TYPES: ModalState['type'][] = ['bar', 'line', 'pie', 'scatter'];
+const THEME_LIGHT = 'fancy-charts-light';
+const THEME_DARK  = 'fancy-charts-dark';
+const DEBOUNCE_MS = 300;
 
 export function serializeBlock(state: ModalState): string {
 	const yaml: string[] = [`type: ${state.type}`];
@@ -29,6 +37,10 @@ export function serializeBlock(state: ModalState): string {
 export class FancyChartsModal extends Modal {
 	private state: ModalState;
 	private xAxisInput: HTMLInputElement | null = null;
+	private previewChartEl: HTMLElement | null = null;
+	private previewErrorEl: HTMLElement | null = null;
+	private renderer: ChartRenderer | null = null;
+	private debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
 	constructor(app: App, private onConfirm: (block: string) => void) {
 		super(app);
@@ -43,15 +55,14 @@ export class FancyChartsModal extends Modal {
 
 		const layout = contentEl.createDiv({ cls: 'fc-modal-layout' });
 		const formEl = layout.createDiv({ cls: 'fc-modal-form' });
-		this.previewContainer = layout.createDiv({ cls: 'fc-modal-preview' });
+		const previewEl = layout.createDiv({ cls: 'fc-modal-preview' });
 
 		this.renderForm(formEl);
+		this.renderPreviewArea(previewEl);
 		this.renderButtons(contentEl);
-	}
 
-	// overridden in subunit 003 to hold ChartRenderer
-	protected previewContainer: HTMLElement | null = null;
-	protected onFormChange(): void {}
+		this.schedulePreviewUpdate();
+	}
 
 	private renderForm(container: HTMLElement): void {
 		this.renderField(container, 'Chart type', el => {
@@ -63,7 +74,7 @@ export class FancyChartsModal extends Modal {
 			}
 			select.addEventListener('change', () => {
 				this.state.type = select.value as ModalState['type'];
-				this.onFormChange();
+				this.schedulePreviewUpdate();
 			});
 		});
 
@@ -73,7 +84,7 @@ export class FancyChartsModal extends Modal {
 			inp.value = this.state.title;
 			inp.addEventListener('input', () => {
 				this.state.title = inp.value;
-				this.onFormChange();
+				this.schedulePreviewUpdate();
 			});
 		});
 
@@ -83,7 +94,7 @@ export class FancyChartsModal extends Modal {
 			this.xAxisInput.value = this.state.xAxis;
 			this.xAxisInput.addEventListener('input', () => {
 				this.state.xAxis = this.xAxisInput!.value;
-				this.onFormChange();
+				this.schedulePreviewUpdate();
 			});
 		});
 
@@ -94,20 +105,16 @@ export class FancyChartsModal extends Modal {
 			ta.addEventListener('input', () => {
 				this.state.tableText = ta.value;
 				this.autoDetectXAxis(ta.value);
-				this.onFormChange();
+				this.schedulePreviewUpdate();
 			});
 		});
 	}
 
-	private autoDetectXAxis(tableText: string): void {
-		if (this.state.xAxis.trim()) return;
-		const result = parseTable(tableText);
-		if ('error' in result) return;
-		const first = result.headers[0];
-		if (first && this.xAxisInput) {
-			this.xAxisInput.value = first;
-			this.state.xAxis = first;
-		}
+	private renderPreviewArea(container: HTMLElement): void {
+		container.createEl('p', { cls: 'fc-modal-preview-label', text: 'Preview' });
+		this.previewChartEl = container.createDiv({ cls: 'fc-modal-preview-chart' });
+		this.previewErrorEl = container.createDiv({ cls: 'fc-modal-preview-error' });
+		this.previewErrorEl.style.display = 'none';
 	}
 
 	private renderButtons(container: HTMLElement): void {
@@ -123,6 +130,60 @@ export class FancyChartsModal extends Modal {
 		cancelBtn.addEventListener('click', () => this.close());
 	}
 
+	private schedulePreviewUpdate(): void {
+		if (this.debounceTimer !== null) clearTimeout(this.debounceTimer);
+		this.debounceTimer = setTimeout(() => {
+			this.debounceTimer = null;
+			this.updatePreview();
+		}, DEBOUNCE_MS);
+	}
+
+	private updatePreview(): void {
+		if (!this.previewChartEl || !this.previewErrorEl) return;
+
+		const source = serializeBlock(this.state)
+			.replace(/^```fancy-charts\n/, '')
+			.replace(/\n```$/, '');
+		const result = parse(source);
+
+		if (!result.ok) {
+			this.showPreviewError(result.error);
+			return;
+		}
+
+		this.hidePreviewError();
+		if (!this.renderer) {
+			const themeName = isDarkMode() ? THEME_DARK : THEME_LIGHT;
+			echarts.registerTheme(themeName, buildEChartsTheme(readThemeVars()));
+			this.renderer = new ChartRenderer(this.previewChartEl, themeName);
+		}
+		this.renderer.render(result.option);
+	}
+
+	private showPreviewError(message: string): void {
+		if (!this.previewErrorEl || !this.previewChartEl) return;
+		this.previewChartEl.style.display = 'none';
+		this.previewErrorEl.style.display = '';
+		this.previewErrorEl.textContent = message;
+	}
+
+	private hidePreviewError(): void {
+		if (!this.previewErrorEl || !this.previewChartEl) return;
+		this.previewErrorEl.style.display = 'none';
+		this.previewChartEl.style.display = '';
+	}
+
+	private autoDetectXAxis(tableText: string): void {
+		if (this.state.xAxis.trim()) return;
+		const result = parseTable(tableText);
+		if (!result) return;
+		const first = result.headers[0];
+		if (first && this.xAxisInput) {
+			this.xAxisInput.value = first;
+			this.state.xAxis = first;
+		}
+	}
+
 	private renderField(container: HTMLElement, label: string, render: (el: HTMLElement) => void): void {
 		const wrap = container.createDiv({ cls: 'fc-modal-field' });
 		wrap.createEl('label', { cls: 'fc-modal-label', text: label });
@@ -130,8 +191,15 @@ export class FancyChartsModal extends Modal {
 	}
 
 	onClose(): void {
+		if (this.debounceTimer !== null) {
+			clearTimeout(this.debounceTimer);
+			this.debounceTimer = null;
+		}
+		this.renderer?.dispose();
+		this.renderer = null;
 		this.contentEl.empty();
 		this.xAxisInput = null;
-		this.previewContainer = null;
+		this.previewChartEl = null;
+		this.previewErrorEl = null;
 	}
 }

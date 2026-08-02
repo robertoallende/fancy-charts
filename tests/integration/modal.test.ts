@@ -1,5 +1,36 @@
 import { serializeBlock, FancyChartsModal } from '../../src/integration/modal';
 import type { ModalState } from '../../src/integration/modal';
+import { ChartRenderer } from '../../src/render/renderer';
+
+vi.mock('../../src/render/renderer', () => {
+	const ChartRenderer = vi.fn();
+	ChartRenderer.prototype.render = vi.fn();
+	ChartRenderer.prototype.dispose = vi.fn();
+	ChartRenderer.prototype.resize = vi.fn();
+	return { ChartRenderer };
+});
+
+vi.mock('../../src/render/echarts-init', () => ({
+	echarts: { registerTheme: vi.fn() },
+}));
+
+vi.mock('../../src/theme/theme-vars', () => ({
+	isDarkMode: vi.fn().mockReturnValue(false),
+	readThemeVars: vi.fn().mockReturnValue({}),
+}));
+
+vi.mock('../../src/theme/theme-builder', () => ({
+	buildEChartsTheme: vi.fn().mockReturnValue({}),
+}));
+
+beforeEach(() => {
+	vi.useFakeTimers();
+});
+
+afterEach(() => {
+	vi.clearAllTimers();
+	vi.useRealTimers();
+});
 
 const baseState: ModalState = {
 	type: 'bar',
@@ -156,5 +187,65 @@ describe('FancyChartsModal — xAxis auto-detection', () => {
 		ta.dispatchEvent(new Event('input'));
 
 		expect(xAxisInput.value).toBe('quarter');
+	});
+});
+
+describe('FancyChartsModal — live preview', () => {
+	beforeEach(() => {
+		vi.mocked(ChartRenderer).prototype.render = vi.fn();
+		vi.mocked(ChartRenderer).prototype.dispose = vi.fn();
+		vi.mocked(ChartRenderer).prototype.resize = vi.fn();
+	});
+
+	it('renders chart after 300ms debounce on open', () => {
+		const modal = new FancyChartsModal({} as never, vi.fn());
+		modal.onOpen();
+		vi.advanceTimersByTime(300);
+		expect(ChartRenderer.prototype.render).toHaveBeenCalledOnce();
+	});
+
+	it('does not render before debounce fires', () => {
+		const modal = new FancyChartsModal({} as never, vi.fn());
+		modal.onOpen();
+		vi.advanceTimersByTime(299);
+		expect(ChartRenderer.prototype.render).not.toHaveBeenCalled();
+	});
+
+	it('shows error panel when parse fails', () => {
+		const modal = new FancyChartsModal({} as never, vi.fn());
+		modal.onOpen();
+
+		const ta = modal.contentEl.querySelector('textarea') as HTMLTextAreaElement;
+		ta.value = 'not a valid table';
+		ta.dispatchEvent(new Event('input'));
+		vi.advanceTimersByTime(300);
+
+		const errEl = modal.contentEl.querySelector('.fc-modal-preview-error') as HTMLElement;
+		expect(errEl.style.display).not.toBe('none');
+	});
+
+	it('hides error panel when parse succeeds', () => {
+		const modal = new FancyChartsModal({} as never, vi.fn());
+		modal.onOpen();
+		vi.advanceTimersByTime(300);
+
+		const errEl = modal.contentEl.querySelector('.fc-modal-preview-error') as HTMLElement;
+		expect(errEl.style.display).toBe('none');
+	});
+
+	it('disposes renderer on close', () => {
+		const modal = new FancyChartsModal({} as never, vi.fn());
+		modal.onOpen();
+		vi.advanceTimersByTime(300);
+		modal.onClose();
+		expect(ChartRenderer.prototype.dispose).toHaveBeenCalledOnce();
+	});
+
+	it('clears pending debounce on close without rendering', () => {
+		const modal = new FancyChartsModal({} as never, vi.fn());
+		modal.onOpen();
+		modal.onClose();
+		vi.advanceTimersByTime(300);
+		expect(ChartRenderer.prototype.render).not.toHaveBeenCalled();
 	});
 });
