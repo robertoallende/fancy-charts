@@ -27,6 +27,7 @@ async function setTheme(theme: 'moonstone' | 'obsidian'): Promise<void> {
 describe('Theme switching', function () {
     beforeEach(async function () {
         await openInPreview('bar-chart.md');
+        await setTheme('moonstone');
     });
 
     it('renders chart in light mode (default)', async function () {

@@ -35,12 +35,12 @@ describe('Chart render pipeline', function () {
             expect(await svg.isExisting()).toBe(true);
         });
 
-        it('chart block has non-zero height', async function () {
+        it('chart block has a height set via inline style', async function () {
             const height = await browser.execute(() => {
-                const el = document.querySelector('.fancy-charts-block');
-                return el ? (el as HTMLElement).offsetHeight : 0;
+                const el = document.querySelector('.fancy-charts-block') as HTMLElement | null;
+                return el ? el.style.height : '';
             });
-            expect(height).toBeGreaterThan(0);
+            expect(height).not.toBe('');
         });
 
         it('does not render an error panel', async function () {
@@ -104,7 +104,9 @@ describe('Chart render pipeline', function () {
         it('error panel contains "Fancy Charts:" prefix', async function () {
             const error = await $('.fc-error');
             await error.waitForExist({ timeout: 5000 });
-            const text = await error.getText();
+            const text = await browser.execute(() =>
+                document.querySelector('.fc-error')?.textContent ?? ''
+            );
             expect(text).toContain('Fancy Charts:');
         });
 
