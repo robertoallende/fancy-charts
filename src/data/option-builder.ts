@@ -102,8 +102,8 @@ function buildScatterOption(config: SimpleConfig, table: TableData): Record<stri
 
 	const option: Record<string, unknown> = {
 		tooltip: { trigger: 'item' },
-		xAxis: { type: 'value' },
-		yAxis: { type: 'value' },
+		xAxis: { type: 'value', scale: true },
+		yAxis: { type: 'value', scale: true },
 		dataset: {
 			source: [
 				[xAxisCol, yCol],
