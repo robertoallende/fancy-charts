@@ -6,3 +6,5 @@ main.js.map
 *.js.map
 coverage/
 .obsidian/
+.obsidian-cache/
+.nyc_output/

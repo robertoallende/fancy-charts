@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "module": "ESNext",
+        "target": "ES2018",
+        "moduleResolution": "bundler",
+        "strict": true,
+        "types": ["@wdio/globals/types", "@wdio/mocha-framework", "wdio-obsidian-service"]
+    },
+    "include": ["specs/**/*.ts"]
+}
