@@ -87,18 +87,6 @@ describe('buildEChartsTheme', () => {
 		expect(textStyle.color).toBe('#262626');
 	});
 
-	it('positions legend at the bottom', () => {
-		const theme = buildEChartsTheme(lightVars);
-		const legend = theme.legend as Record<string, unknown>;
-		expect(legend.bottom).toBe(0);
-	});
-
-	it('adds grid bottom padding to leave room for the legend', () => {
-		const theme = buildEChartsTheme(lightVars);
-		const grid = theme.grid as Record<string, unknown>;
-		expect(typeof grid.bottom).toBe('number');
-		expect(grid.bottom as number).toBeGreaterThan(0);
-	});
 
 	it('includes accent color first in the palette', () => {
 		const theme = buildEChartsTheme(lightVars);

@@ -13,7 +13,8 @@ function buildCartesianOption(config: SimpleConfig, table: TableData): Record<st
 
 	const option: Record<string, unknown> = {
 		tooltip: { trigger: 'axis' },
-		legend: { data: seriesCols },
+		legend: { data: seriesCols, bottom: 0 },
+		grid: { bottom: 40 },
 		dataset: {
 			source: [
 				table.headers,
@@ -39,6 +40,7 @@ function buildPieOption(config: SimpleConfig, table: TableData): Record<string, 
 
 	const option: Record<string, unknown> = {
 		tooltip: { trigger: 'item' },
+		legend: { bottom: 0 },
 		dataset: {
 			source: [
 				[xAxisCol, valueCol],

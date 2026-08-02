@@ -58,6 +58,18 @@ describe('buildOption — bar', () => {
 		expect(source[0]).toEqual(['quarter', 'sales', 'profit']);
 		expect(source[1]).toEqual(['Q1', '120', '30']);
 	});
+
+	it('positions legend at the bottom', () => {
+		const config: SimpleConfig = { type: 'bar', xAxis: 'quarter' };
+		const option = buildOption(config, basicTable);
+		expect((option.legend as Record<string, unknown>).bottom).toBe(0);
+	});
+
+	it('sets grid bottom padding to leave room for the legend', () => {
+		const config: SimpleConfig = { type: 'bar', xAxis: 'quarter' };
+		const option = buildOption(config, basicTable);
+		expect((option.grid as Record<string, unknown>).bottom).toBeGreaterThan(0);
+	});
 });
 
 describe('buildOption — line', () => {
@@ -101,6 +113,12 @@ describe('buildOption — pie', () => {
 		const config: SimpleConfig = { type: 'pie', xAxis: 'quarter' };
 		const option = buildOption(config, basicTable);
 		expect(option.title).toBeUndefined();
+	});
+
+	it('positions legend at the bottom', () => {
+		const config: SimpleConfig = { type: 'pie', xAxis: 'quarter' };
+		const option = buildOption(config, basicTable);
+		expect((option.legend as Record<string, unknown>).bottom).toBe(0);
 	});
 
 	it('uses first column as xAxis when xAxis is omitted', () => {
