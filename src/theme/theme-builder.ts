@@ -36,6 +36,7 @@ export function buildEChartsTheme(vars: ObsidianThemeVars): Record<string, unkno
 		},
 		legend: {
 			textStyle: { color: vars.textNormal },
+			padding: [4, 8, 16, 8],
 		},
 		color: palette,
 	};
