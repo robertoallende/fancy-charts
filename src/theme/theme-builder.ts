@@ -24,6 +24,10 @@ export function buildEChartsTheme(vars: ObsidianThemeVars): Record<string, unkno
 			color:      vars.textNormal,
 			fontFamily: vars.fontInterface,
 		},
+		title: {
+			textStyle:    { color: vars.textNormal },
+			subtextStyle: { color: vars.textMuted },
+		},
 		categoryAxis: axis,
 		valueAxis:    axis,
 		tooltip: {

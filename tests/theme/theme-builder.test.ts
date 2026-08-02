@@ -66,6 +66,20 @@ describe('buildEChartsTheme', () => {
 		expect(textStyle.color).toBe('#dcddde');
 	});
 
+	it('sets title text color from textNormal', () => {
+		const theme = buildEChartsTheme(lightVars);
+		const title = theme.title as Record<string, unknown>;
+		const textStyle = title.textStyle as Record<string, unknown>;
+		expect(textStyle.color).toBe('#262626');
+	});
+
+	it('sets title subtext color from textMuted', () => {
+		const theme = buildEChartsTheme(darkVars);
+		const title = theme.title as Record<string, unknown>;
+		const subtextStyle = title.subtextStyle as Record<string, unknown>;
+		expect(subtextStyle.color).toBe('#888888');
+	});
+
 	it('sets legend text color from textNormal', () => {
 		const theme = buildEChartsTheme(lightVars);
 		const legend = theme.legend as Record<string, unknown>;
