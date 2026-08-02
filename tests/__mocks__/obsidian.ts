@@ -44,3 +44,48 @@ export class MarkdownRenderChild {
 
 export class Plugin {}
 export class Notice { constructor(_msg: string) {} }
+
+export class PluginSettingTab {
+  containerEl: HTMLDivElement & { empty(): void };
+  app: unknown;
+  plugin: unknown;
+  constructor(app: unknown, plugin: unknown) {
+    this.app = app;
+    this.plugin = plugin;
+    const el = document.createElement('div') as HTMLDivElement & { empty(): void };
+    el.empty = () => { el.innerHTML = ''; };
+    this.containerEl = el;
+  }
+  display(): void {}
+  hide(): void {}
+}
+
+type TextCallback = (text: { setValue: (v: string) => { onChange: (fn: (v: string) => void) => void } }) => void;
+
+export class Setting {
+  private el: HTMLDivElement;
+  constructor(containerEl: HTMLElement) {
+    this.el = containerEl.createEl('div');
+  }
+  setName(name: string): this {
+    this.el.createEl('span', { text: name });
+    return this;
+  }
+  setDesc(desc: string): this {
+    this.el.createEl('small', { text: desc });
+    return this;
+  }
+  addText(cb: TextCallback): this {
+    let _onChange: ((v: string) => void) | null = null;
+    const input = this.el.createEl('input');
+    cb({
+      setValue: (v: string) => {
+        input.value = v;
+        return {
+          onChange: (fn: (v: string) => void) => { _onChange = fn; input.addEventListener('change', () => _onChange?.(input.value)); },
+        };
+      },
+    });
+    return this;
+  }
+}
