@@ -12,6 +12,26 @@
   font-size: var(--font-ui-small);
 }
 
+.fc-edit-btn {
+  display: block;
+  margin-top: 4px;
+  padding: 2px 10px;
+  font-size: var(--font-ui-small);
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-s);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.fancy-charts-block:hover ~ .fc-edit-btn,
+.fc-edit-btn:hover,
+.fc-error:hover ~ .fc-edit-btn {
+  opacity: 1;
+}
+
 /* Insert chart modal */
 
 .fc-modal .modal-content {
@@ -20,22 +40,20 @@
 
 .fc-modal-layout {
   display: flex;
+  flex-direction: column;
   gap: 16px;
   padding: 16px;
 }
 
 .fc-modal-form {
-  flex: 0 0 280px;
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
 .fc-modal-preview {
-  flex: 1;
   display: flex;
   flex-direction: column;
-  min-width: 0;
 }
 
 .fc-modal-preview-label {
@@ -45,8 +63,7 @@
 }
 
 .fc-modal-preview-chart {
-  flex: 1;
-  min-height: 260px;
+  height: 300px;
 }
 
 .fc-modal-preview-error {

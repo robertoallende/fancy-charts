@@ -1,6 +1,7 @@
 import { App, Modal } from 'obsidian';
 import { parseTable } from '../data/table-parser';
 import { parse } from '../data/parser';
+import { splitSource, parseYaml } from '../data/yaml-parser';
 import { ChartRenderer } from '../render/renderer';
 import { echarts } from '../render/echarts-init';
 import { isDarkMode, readThemeVars } from '../theme/theme-vars';
@@ -34,6 +35,27 @@ export function serializeBlock(state: ModalState): string {
 	return `\`\`\`fancy-charts\n${inner}\n\`\`\``;
 }
 
+const VALID_TYPES: ReadonlyArray<ModalState['type']> = ['bar', 'line', 'pie', 'scatter'];
+
+export function deserializeBlock(raw: string): ModalState {
+	const split = splitSource(raw);
+	if ('error' in split) return { ...DEFAULT_STATE };
+
+	const config = parseYaml(split.yaml);
+	if ('error' in config) return { ...DEFAULT_STATE };
+
+	const rawType = config['type'];
+	const type: ModalState['type'] = VALID_TYPES.includes(rawType as ModalState['type'])
+		? (rawType as ModalState['type'])
+		: DEFAULT_STATE.type;
+
+	const title = typeof config['title'] === 'string' ? config['title'] : '';
+	const xAxis = typeof config['xAxis'] === 'string' ? config['xAxis'] : '';
+	const tableText = split.rest.trim() || DEFAULT_STATE.tableText;
+
+	return { type, title, xAxis, tableText };
+}
+
 export class FancyChartsModal extends Modal {
 	private state: ModalState;
 	private xAxisInput: HTMLInputElement | null = null;
@@ -42,9 +64,9 @@ export class FancyChartsModal extends Modal {
 	private renderer: ChartRenderer | null = null;
 	private debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
-	constructor(app: App, private onConfirm: (block: string) => void) {
+	constructor(app: App, private onConfirm: (block: string) => void, initialState?: ModalState) {
 		super(app);
-		this.state = { ...DEFAULT_STATE };
+		this.state = initialState ? { ...initialState } : { ...DEFAULT_STATE };
 	}
 
 	onOpen(): void {
