@@ -193,8 +193,8 @@ function buildSankeyOption(config: SimpleConfig, table: TableData): Record<strin
 	};
 
 	if (config.title) {
-		option.title = { text: config.title, left: 'center' };
-		series.top = 30;
+		option.title = { text: config.title };
+		series.top = 40;
 	}
 	return option;
 }
