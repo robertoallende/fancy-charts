@@ -126,9 +126,18 @@ export class TableEditor {
 			this.onChange(this.getValue());
 		});
 
+		const removeCol = this.makeBtn('Remove column', () => {
+			if (this.headers.length <= 1) return;
+			this.headers.pop();
+			this.rows = this.rows.map(r => r.slice(0, -1));
+			this.render();
+			this.onChange(this.getValue());
+		});
+
 		toolbar.appendChild(addRow);
 		toolbar.appendChild(addCol);
 		toolbar.appendChild(removeRow);
+		toolbar.appendChild(removeCol);
 		return toolbar;
 	}
 

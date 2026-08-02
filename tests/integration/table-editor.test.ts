@@ -192,6 +192,29 @@ describe('TableEditor — Remove row', () => {
 	});
 });
 
+describe('TableEditor — Remove column', () => {
+	it('removes the last column from headers and all rows', () => {
+		const { editor, container } = make();
+		toolbarBtn(container, 'Remove column').click();
+		expect(container.querySelectorAll('.fc-table-editor thead th')).toHaveLength(1);
+		expect(editor.getValue()).not.toContain('value');
+	});
+
+	it('does not remove the last remaining column', () => {
+		const { container } = make();
+		toolbarBtn(container, 'Remove column').click(); // 2 → 1
+		toolbarBtn(container, 'Remove column').click(); // should stay at 1
+		expect(container.querySelectorAll('.fc-table-editor thead th')).toHaveLength(1);
+	});
+
+	it('calls onChange after removing a column', () => {
+		const { container, onChange } = make();
+		const before = onChange.mock.calls.length;
+		toolbarBtn(container, 'Remove column').click();
+		expect(onChange.mock.calls.length).toBeGreaterThan(before);
+	});
+});
+
 describe('TableEditor — keyboard navigation', () => {
 	function tab(el: HTMLElement, shift = false): void {
 		el.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', shiftKey: shift, bubbles: true }));
