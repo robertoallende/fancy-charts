@@ -30,7 +30,7 @@ export class TableEditor {
 			this.rows    = [['', ''], ['', '']];
 		}
 
-		this.el = this.container.createEl('div', { cls: 'fc-table-editor' });
+		this.el = this.container.createDiv({ cls: 'fc-table-editor' });
 		this.render();
 		this.bindKeyboard();
 	}
@@ -46,7 +46,7 @@ export class TableEditor {
 	private render(): void {
 		this.el.empty();
 
-		const wrapper = this.el.createEl('div', { cls: 'fc-table-wrapper' });
+		const wrapper = this.el.createDiv({ cls: 'fc-table-wrapper' });
 		const table   = wrapper.createEl('table', { cls: 'fc-table' });
 
 		const thead    = table.createEl('thead');
@@ -82,7 +82,7 @@ export class TableEditor {
 	}
 
 	private makeToolbar(parent: HTMLElement): void {
-		const toolbar = parent.createEl('div', { cls: 'fc-table-toolbar' });
+		const toolbar = parent.createDiv({ cls: 'fc-table-toolbar' });
 
 		this.makeBtn(toolbar, 'Add row', () => {
 			this.rows.push(Array<string>(this.headers.length).fill(''));
