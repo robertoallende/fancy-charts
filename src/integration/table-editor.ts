@@ -44,7 +44,7 @@ export class TableEditor {
 	}
 
 	private render(): void {
-		this.el.innerHTML = '';
+		this.el.empty();
 
 		const wrapper = this.el.createEl('div', { cls: 'fc-table-wrapper' });
 		const table   = wrapper.createEl('table', { cls: 'fc-table' });

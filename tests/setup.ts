@@ -51,4 +51,6 @@ if (typeof HTMLElement !== "undefined") {
   (HTMLElement.prototype as any).createDiv = function (opts?: CreateElOptions) { return createElImpl.call(this, "div", opts); };
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (HTMLElement.prototype as any).createSpan = function (opts?: CreateElOptions) { return createElImpl.call(this, "span", opts); };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (HTMLElement.prototype as any).empty = function () { this.innerHTML = ''; };
 }
