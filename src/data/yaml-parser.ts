@@ -1,4 +1,4 @@
-import { parse } from 'yaml';
+import { parseYamlValue } from './mini-yaml';
 import type { ChartMode } from '../model/chart';
 
 const DELIMITER = /^---$/m;
@@ -26,7 +26,7 @@ export function splitSource(source: string): { yaml: string; rest: string } | { 
 export function parseYaml(yamlStr: string): Record<string, unknown> | { error: string } {
 	if (!yamlStr.trim()) return { error: 'Empty configuration block.' };
 	try {
-		const parsed = parse(yamlStr) as unknown;
+		const parsed = parseYamlValue(yamlStr);
 		if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) {
 			return { error: 'Configuration must be a YAML mapping, not a list or scalar.' };
 		}

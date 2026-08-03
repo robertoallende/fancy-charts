@@ -1,7 +1,7 @@
 {
   "id": "fancy-charts",
   "name": "Fancy Charts",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "minAppVersion": "1.7.2",
   "description": "Interactive charts inside any note. The data lives as a plain Markdown table inside each block — readable and AI-friendly even without the plugin.",
   "author": "Roberto Allende",

@@ -32,8 +32,5 @@
     "vitest": "^4.1.10",
     "wdio-obsidian-reporter": "^3.1.1",
     "wdio-obsidian-service": "^3.1.1"
-  },
-  "dependencies": {
-    "yaml": "^2.9.0"
   }
 }
