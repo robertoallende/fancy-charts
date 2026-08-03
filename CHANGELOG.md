@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.5 - 04/08/2026
+
+- Removed unnecessary type assertions flagged by the Obsidian linter (`parseSingleQuoted` and `parseDoubleQuoted` already return `string`)
+
 ## 0.1.4 - 03/08/2026
 
 - Fixed CSS `!important` violations — specificity is now achieved with parent-class selectors instead

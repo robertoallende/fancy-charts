@@ -333,8 +333,8 @@ function parseScalarToken(s: string): unknown {
 
 function parseScalarKey(s: string): string {
 	const t = s.trim();
-	if (t.startsWith("'")) return parseSingleQuoted(t) as string;
-	if (t.startsWith('"')) return parseDoubleQuoted(t) as string;
+	if (t.startsWith("'")) return parseSingleQuoted(t);
+	if (t.startsWith('"')) return parseDoubleQuoted(t);
 	return t;
 }
 
