@@ -19,6 +19,25 @@ export class FancyChartsSettingTab extends PluginSettingTab {
 		super(app, plugin);
 	}
 
+	getSettingDefinitions() {
+		return [
+			{
+				name: 'Default chart height',
+				desc: 'Height in pixels for chart blocks (100–2000).',
+				render: (setting: Setting) => {
+					setting.addText(text =>
+						text
+							.setValue(String(this.plugin.settings.defaultHeight))
+							.onChange(async (value) => {
+								this.plugin.settings.defaultHeight = clampHeight(parseInt(value, 10));
+								await this.plugin.saveSettings();
+							})
+					);
+				},
+			},
+		];
+	}
+
 	display(): void {
 		const { containerEl } = this;
 		containerEl.empty();
