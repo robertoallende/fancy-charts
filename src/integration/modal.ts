@@ -99,7 +99,7 @@ export class FancyChartsModal extends Modal {
 	private previewErrorEl: HTMLElement | null = null;
 	private renderer: ChartRenderer | null = null;
 	private tableEditor: TableEditor | null = null;
-	private debounceTimer: ReturnType<typeof window.setTimeout> | null = null;
+	private debounceTimer: number | null = null;
 
 	constructor(app: App, private onConfirm: (block: string) => void, initialState?: ModalState) {
 		super(app);
