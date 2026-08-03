@@ -2,6 +2,7 @@
 
 ```fancy-charts
 ---
+version: 1
 type: bar
 title: Sales by Quarter
 xAxis: quarter

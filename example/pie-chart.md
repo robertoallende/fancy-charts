@@ -2,6 +2,7 @@
 
 ```fancy-charts
 ---
+version: 1
 type: pie
 title: Market Share
 xAxis: company

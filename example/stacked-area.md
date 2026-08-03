@@ -2,6 +2,7 @@
 
 ```fancy-charts
 ---
+version: 1
 type: area
 title: Monthly Trends
 xAxis: month

@@ -2,6 +2,7 @@
 
 ```fancy-charts
 ---
+version: 1
 type: funnel
 title: Sales Funnel
 xAxis: stage

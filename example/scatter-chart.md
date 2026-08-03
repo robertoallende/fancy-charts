@@ -2,6 +2,7 @@
 
 ```fancy-charts
 ---
+version: 1
 type: scatter
 title: Height vs Weight
 xAxis: height_cm

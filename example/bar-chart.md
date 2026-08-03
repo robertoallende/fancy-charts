@@ -4,6 +4,7 @@ Simple bar chart with multiple series, auto-detected from the table columns.
 
 ```fancy-charts
 ---
+version: 1
 type: bar
 title: Quarterly Revenue
 xAxis: quarter
@@ -20,6 +21,7 @@ Single series using explicit `yAxis`:
 
 ```fancy-charts
 ---
+version: 1
 type: bar
 title: Sales Only
 xAxis: quarter

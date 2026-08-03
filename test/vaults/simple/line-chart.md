@@ -2,6 +2,7 @@
 
 ```fancy-charts
 ---
+version: 1
 type: line
 title: Monthly Revenue
 xAxis: month

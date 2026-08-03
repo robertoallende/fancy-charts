@@ -1,5 +1,6 @@
 ```fancy-charts
 ---
+version: 1
 type: heatmap
 title: Activity Heatmap
 ---

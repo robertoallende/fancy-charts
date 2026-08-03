@@ -2,6 +2,7 @@
 
 ```fancy-charts
 ---
+version: 1
 type: heatmap
 title: Activity by Day and Time
 ---
