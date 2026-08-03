@@ -66,6 +66,10 @@
   height: 300px;
 }
 
+.fc-modal-preview-hidden {
+  display: none;
+}
+
 .fc-modal-preview-error {
   padding: 8px 12px;
   border-left: 3px solid var(--color-red);
@@ -121,19 +125,19 @@
   background: var(--background-secondary);
 }
 
-.fc-table-cell {
+.fc-table-editor .fc-table-cell {
   width: 100%;
   padding: 3px 6px;
   background: transparent;
   border: none;
-  border-radius: 0 !important;
+  border-radius: 0;
   color: var(--text-normal);
   font-size: var(--font-ui-small);
   font-family: var(--font-monospace);
   box-sizing: border-box;
 }
 
-.fc-table-cell:focus {
+.fc-table-editor .fc-table-cell:focus {
   outline: 2px solid var(--color-accent);
   outline-offset: -2px;
 }
@@ -166,22 +170,22 @@
   overflow: hidden;
 }
 
-.fc-modal-mode-btn {
+.fc-modal-mode-toggle .fc-modal-mode-btn {
   flex: 1;
   padding: 4px 12px;
   font-size: var(--font-ui-small);
   color: var(--text-muted);
   background: transparent;
   border: none;
-  border-radius: 0 !important;
+  border-radius: 0;
   cursor: pointer;
 }
 
-.fc-modal-mode-btn + .fc-modal-mode-btn {
+.fc-modal-mode-toggle .fc-modal-mode-btn + .fc-modal-mode-btn {
   border-left: 1px solid var(--background-modifier-border);
 }
 
-.fc-modal-mode-btn.is-active {
+.fc-modal-mode-toggle .fc-modal-mode-btn.is-active {
   background: var(--background-modifier-hover);
   color: var(--text-normal);
 }

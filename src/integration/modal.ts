@@ -235,7 +235,7 @@ export class FancyChartsModal extends Modal {
 		container.createEl('p', { cls: 'fc-modal-preview-label', text: 'Preview' });
 		this.previewChartEl = container.createDiv({ cls: 'fc-modal-preview-chart' });
 		this.previewErrorEl = container.createDiv({ cls: 'fc-modal-preview-error' });
-		this.previewErrorEl.style.display = 'none';
+		this.previewErrorEl.classList.add('fc-modal-preview-hidden');
 	}
 
 	private currentBlock(): string {
@@ -290,15 +290,15 @@ export class FancyChartsModal extends Modal {
 
 	private showPreviewError(message: string): void {
 		if (!this.previewErrorEl || !this.previewChartEl) return;
-		this.previewChartEl.style.display = 'none';
-		this.previewErrorEl.style.display = '';
+		this.previewChartEl.classList.add('fc-modal-preview-hidden');
+		this.previewErrorEl.classList.remove('fc-modal-preview-hidden');
 		this.previewErrorEl.textContent = message;
 	}
 
 	private hidePreviewError(): void {
 		if (!this.previewErrorEl || !this.previewChartEl) return;
-		this.previewErrorEl.style.display = 'none';
-		this.previewChartEl.style.display = '';
+		this.previewErrorEl.classList.add('fc-modal-preview-hidden');
+		this.previewChartEl.classList.remove('fc-modal-preview-hidden');
 	}
 
 	private autoDetectXAxis(tableText: string): void {

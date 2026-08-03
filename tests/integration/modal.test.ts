@@ -229,7 +229,7 @@ describe('FancyChartsModal — live preview', () => {
 		vi.advanceTimersByTime(300);
 
 		const errEl = modal.contentEl.querySelector('.fc-modal-preview-error') as HTMLElement;
-		expect(errEl.style.display).not.toBe('none');
+		expect(errEl.classList.contains('fc-modal-preview-hidden')).toBe(false);
 	});
 
 	it('hides error panel when parse succeeds', () => {
@@ -238,7 +238,7 @@ describe('FancyChartsModal — live preview', () => {
 		vi.advanceTimersByTime(300);
 
 		const errEl = modal.contentEl.querySelector('.fc-modal-preview-error') as HTMLElement;
-		expect(errEl.style.display).toBe('none');
+		expect(errEl.classList.contains('fc-modal-preview-hidden')).toBe(true);
 	});
 
 	it('disposes renderer on close', () => {
