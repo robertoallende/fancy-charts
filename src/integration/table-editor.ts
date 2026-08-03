@@ -85,7 +85,7 @@ export class TableEditor {
 		const toolbar = parent.createEl('div', { cls: 'fc-table-toolbar' });
 
 		this.makeBtn(toolbar, 'Add row', () => {
-			this.rows.push(new Array(this.headers.length).fill(''));
+			this.rows.push(Array<string>(this.headers.length).fill(''));
 			this.render();
 			this.onChange(this.getValue());
 		});
@@ -134,7 +134,7 @@ export class TableEditor {
 				e.preventDefault();
 				if (!e.shiftKey) {
 					if (idx === all.length - 1) {
-						this.rows.push(new Array(this.headers.length).fill(''));
+						this.rows.push(Array<string>(this.headers.length).fill(''));
 						this.render();
 						this.onChange(this.getValue());
 						inputs()[all.length]?.focus();
@@ -146,7 +146,7 @@ export class TableEditor {
 				}
 			} else if (e.key === 'Enter' && idx === all.length - 1) {
 				e.preventDefault();
-				this.rows.push(new Array(this.headers.length).fill(''));
+				this.rows.push(Array<string>(this.headers.length).fill(''));
 				this.render();
 				this.onChange(this.getValue());
 				inputs()[all.length]?.focus();

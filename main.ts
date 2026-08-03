@@ -31,8 +31,8 @@ export default class FancyChartsPlugin extends Plugin {
   onunload() {}
 
   async loadSettings() {
-    const data = await this.loadData();
-    this.settings = Object.assign({}, DEFAULT_SETTINGS, data);
+    const data = (await this.loadData()) as Partial<FancyChartsSettings> | null;
+    this.settings = Object.assign({}, DEFAULT_SETTINGS, data ?? {});
   }
 
   async saveSettings() {

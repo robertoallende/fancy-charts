@@ -259,8 +259,8 @@ export class FancyChartsModal extends Modal {
 	}
 
 	private schedulePreviewUpdate(): void {
-		if (this.debounceTimer !== null) clearTimeout(this.debounceTimer);
-		this.debounceTimer = setTimeout(() => {
+		if (this.debounceTimer !== null) window.clearTimeout(this.debounceTimer);
+		this.debounceTimer = window.setTimeout(() => {
 			this.debounceTimer = null;
 			this.updatePreview();
 		}, DEBOUNCE_MS);
@@ -320,7 +320,7 @@ export class FancyChartsModal extends Modal {
 
 	onClose(): void {
 		if (this.debounceTimer !== null) {
-			clearTimeout(this.debounceTimer);
+			window.clearTimeout(this.debounceTimer);
 			this.debounceTimer = null;
 		}
 		this.renderer?.dispose();

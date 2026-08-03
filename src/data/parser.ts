@@ -34,7 +34,7 @@ function validateSimpleConfig(
 	const yAxis = raw['yAxis'];
 	if (yAxis !== undefined) {
 		if (!Array.isArray(yAxis)) return { error: "Field 'yAxis' must be a list of column names." };
-		for (const col of yAxis) {
+		for (const col of yAxis as string[]) {
 			if (!headers.includes(col)) {
 				return { error: `Column '${col}' not found. Available columns: ${headers.join(', ')}.` };
 			}
@@ -44,7 +44,7 @@ function validateSimpleConfig(
 	return {
 		version,
 		type: type as SimpleConfig['type'],
-		...(typeof raw['title'] === 'string' ? { title: raw['title'] as string } : {}),
+		...(typeof raw['title'] === 'string' ? { title: raw['title'] } : {}),
 		...(typeof xAxis === 'string' ? { xAxis } : {}),
 		...(Array.isArray(yAxis) ? { yAxis: yAxis as string[] } : {}),
 	};
