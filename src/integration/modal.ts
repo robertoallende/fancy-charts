@@ -228,6 +228,7 @@ export class FancyChartsModal extends Modal {
 				this.advancedYaml = ta.value;
 				this.schedulePreviewUpdate();
 			});
+			el.createEl('p', { cls: 'fc-modal-advanced-note', text: 'Standard YAML — mappings, sequences, and scalars. Anchors, aliases, and merge keys are not supported.' });
 		});
 	}
 

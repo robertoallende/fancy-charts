@@ -203,6 +203,12 @@
   box-sizing: border-box;
 }
 
+.fc-modal-advanced-note {
+  margin: 4px 0 0;
+  font-size: var(--font-ui-smaller);
+  color: var(--text-muted);
+}
+
 .fc-modal-buttons {
   display: flex;
   justify-content: flex-end;
