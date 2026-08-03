@@ -8,7 +8,7 @@ Charts that live where your notes do.
 
 ## Why
 
-Every charting tool I tried asked me to leave my note. Copy the table out, paste it into an external app, screenshot the chart, embed the image. When the data changes, start over. Fancy Charts keeps the data and the chart in the same place — as a fenced code block in the note itself. Edit the table, the chart updates instantly.
+I really missed a modern chart plugin in Obsidian that would allow me to have self-contained blocks so I can use Obsidian to visualize data — and at the same time fit well with my AI flow. Fancy Charts not only produces clean visualizations, it also provides a clean format for data. Inside each block, the data lives as a plain Markdown table: easy to read and edit even without the plugin installed.
 
 ## Features
 
