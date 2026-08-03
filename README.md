@@ -102,6 +102,8 @@ The full schema is documented in [docs/schema.md](docs/schema.md).
 
 Because the data is a standard Markdown table, a chart block is still readable — as a table, without the interactive chart — in any Markdown viewer, even without the plugin.
 
+![Fancy Charts block as plain markdown](images/demo-format.png)
+
 ## Feature Requests and Issues
 
 If there's a gap you'd like prioritized, [open an issue](https://github.com/robertoallende/fancy-charts/issues) — this roadmap takes real usage and feedback into account.
