@@ -30,9 +30,7 @@ export class TableEditor {
 			this.rows    = [['', ''], ['', '']];
 		}
 
-		this.el = document.createElement('div');
-		this.el.className = 'fc-table-editor';
-		this.container.appendChild(this.el);
+		this.el = this.container.createEl('div', { cls: 'fc-table-editor' });
 		this.render();
 		this.bindKeyboard();
 	}
@@ -48,106 +46,77 @@ export class TableEditor {
 	private render(): void {
 		this.el.innerHTML = '';
 
-		const wrapper = document.createElement('div');
-		wrapper.className = 'fc-table-wrapper';
+		const wrapper = this.el.createEl('div', { cls: 'fc-table-wrapper' });
+		const table   = wrapper.createEl('table', { cls: 'fc-table' });
 
-		const table = document.createElement('table');
-		table.className = 'fc-table';
-
-		// Header row
-		const thead = document.createElement('thead');
-		const headerTr = document.createElement('tr');
+		const thead    = table.createEl('thead');
+		const headerTr = thead.createEl('tr');
 		this.headers.forEach((h, col) => {
-			const th = document.createElement('th');
-			const input = this.makeInput(h, `column${col + 1}`, (val) => {
+			const th = headerTr.createEl('th');
+			this.makeInput(th, h, `column${col + 1}`, (val) => {
 				this.headers[col] = val;
 				this.onChange(this.getValue());
 			});
-			th.appendChild(input);
-			headerTr.appendChild(th);
 		});
-		thead.appendChild(headerTr);
-		table.appendChild(thead);
 
-		// Data rows
-		const tbody = document.createElement('tbody');
+		const tbody = table.createEl('tbody');
 		this.rows.forEach((row, rowIdx) => {
-			const tr = document.createElement('tr');
+			const tr = tbody.createEl('tr');
 			this.headers.forEach((_, col) => {
-				const td = document.createElement('td');
-				const input = this.makeInput(row[col] ?? '', '', (val) => {
+				const td = tr.createEl('td');
+				this.makeInput(td, row[col] ?? '', '', (val) => {
 					this.rows[rowIdx][col] = val;
 					this.onChange(this.getValue());
 				});
-				td.appendChild(input);
-				tr.appendChild(td);
 			});
-			tbody.appendChild(tr);
 		});
-		table.appendChild(tbody);
 
-		wrapper.appendChild(table);
-		this.el.appendChild(wrapper);
-
-		this.el.appendChild(this.makeToolbar());
+		this.makeToolbar(this.el);
 	}
 
-	private makeInput(value: string, placeholder: string, onInput: (val: string) => void): HTMLInputElement {
-		const input = document.createElement('input');
-		input.type = 'text';
-		input.className = 'fc-table-cell';
+	private makeInput(parent: HTMLElement, value: string, placeholder: string, onInput: (val: string) => void): HTMLInputElement {
+		const input = parent.createEl('input', { cls: 'fc-table-cell', type: 'text', placeholder });
 		input.value = value;
-		input.placeholder = placeholder;
 		input.addEventListener('input', () => onInput(input.value));
 		return input;
 	}
 
-	private makeToolbar(): HTMLElement {
-		const toolbar = document.createElement('div');
-		toolbar.className = 'fc-table-toolbar';
+	private makeToolbar(parent: HTMLElement): void {
+		const toolbar = parent.createEl('div', { cls: 'fc-table-toolbar' });
 
-		const addRow = this.makeBtn('Add row', () => {
+		this.makeBtn(toolbar, 'Add row', () => {
 			this.rows.push(new Array(this.headers.length).fill(''));
 			this.render();
 			this.onChange(this.getValue());
 		});
 
-		const addCol = this.makeBtn('Add column', () => {
+		this.makeBtn(toolbar, 'Add column', () => {
 			this.headers.push('');
 			this.rows = this.rows.map(r => [...r, '']);
 			this.render();
 			this.onChange(this.getValue());
 		});
 
-		const removeRow = this.makeBtn('Remove row', () => {
+		this.makeBtn(toolbar, 'Remove row', () => {
 			if (this.rows.length <= 1) return;
 			this.rows.pop();
 			this.render();
 			this.onChange(this.getValue());
 		});
 
-		const removeCol = this.makeBtn('Remove column', () => {
+		this.makeBtn(toolbar, 'Remove column', () => {
 			if (this.headers.length <= 1) return;
 			this.headers.pop();
 			this.rows = this.rows.map(r => r.slice(0, -1));
 			this.render();
 			this.onChange(this.getValue());
 		});
-
-		toolbar.appendChild(addRow);
-		toolbar.appendChild(addCol);
-		toolbar.appendChild(removeRow);
-		toolbar.appendChild(removeCol);
-		return toolbar;
 	}
 
-	private makeBtn(label: string, onClick: () => void): HTMLButtonElement {
-		const btn = document.createElement('button');
+	private makeBtn(parent: HTMLElement, label: string, onClick: () => void): void {
+		const btn = parent.createEl('button', { cls: 'fc-table-btn', text: label });
 		btn.type = 'button';
-		btn.className = 'fc-table-btn';
-		btn.textContent = label;
 		btn.addEventListener('click', onClick);
-		return btn;
 	}
 
 	private bindKeyboard(): void {
