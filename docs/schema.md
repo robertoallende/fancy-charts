@@ -1,4 +1,4 @@
-# Fancy Charts Block Schema
+# Fancy Charts Block Schema — Version 1
 
 A self-contained specification for the markdown-based chart format. Any app that reads files following this schema will produce compatible charts.
 
@@ -20,6 +20,7 @@ There are two modes:
 ````markdown
 ```fancy-charts
 ---
+version: 1
 type: bar
 title: Quarterly Revenue
 xAxis: quarter
