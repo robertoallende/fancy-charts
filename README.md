@@ -109,3 +109,9 @@ If there's a gap you'd like prioritized, [open an issue](https://github.com/robe
 ## License
 
 [MIT](LICENSE) — Copyright (c) 2026 Astuten.io Ltd
+
+---
+
+[![CI](https://github.com/robertoallende/fancy-charts/actions/workflows/ci.yml/badge.svg)](https://github.com/robertoallende/fancy-charts/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/robertoallende/fancy-charts/graph/badge.svg?token=JNAYPAWJEQ)](https://codecov.io/gh/robertoallende/fancy-charts)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)

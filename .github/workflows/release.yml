@@ -1,0 +1,98 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+
+permissions:
+  contents: write
+  attestations: write
+  id-token: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - run: npm run build
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Get Obsidian cache key
+        run: |
+          npx tsx wdio.conf.mts | grep 'obsidian-cache-key:' > obsidian-versions-lock.txt
+          rm -rf .obsidian-cache
+        env:
+          CI: true
+
+      - name: Cache Obsidian
+        uses: actions/cache@v4
+        with:
+          path: .obsidian-cache
+          key: obsidian-cache-${{ hashFiles('obsidian-versions-lock.txt') }}
+
+      - name: Setup virtual display
+        run: |
+          sudo rm -rf /etc/apt/sources.list.d/*.list
+          echo "set man-db/auto-update false" | sudo debconf-communicate
+          sudo dpkg-reconfigure man-db
+          sudo apt-get update -q
+          sudo apt-get install -q herbstluftwm x11-xserver-utils
+          export DISPLAY=:99
+          echo "DISPLAY=$DISPLAY" >> "$GITHUB_ENV"
+          Xvfb $DISPLAY -screen 0 1280x1024x24 +extension GLX -noreset &
+          sleep 1
+          herbstluftwm &
+          sleep 1
+
+      - name: E2E tests
+        run: npm run test:e2e
+        env:
+          WDIO_MAX_INSTANCES: 2
+
+  release:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Attest main.js
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: main.js
+
+      - name: Attest styles.css
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: styles.css
+
+      - name: Create release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create ${{ github.ref_name }} \
+            main.js \
+            manifest.json \
+            styles.css \
+            --title "${{ github.ref_name }}" \
+            --notes "Release ${{ github.ref_name }}"
