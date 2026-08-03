@@ -88,6 +88,7 @@ When the top-level key `echarts:` is present, the block is treated as advanced m
 
 | Key | Required | Default | Description |
 |-----|----------|---------|-------------|
+| `version` | no | `1` | Block format version. Blocks without this key are treated as version 1 |
 | `type` | yes | — | Chart type. One of: `bar`, `line`, `pie`, `scatter`, `area`, `funnel`, `heatmap`, `sankey` |
 | `title` | no | none | Chart title displayed above the chart |
 | `xAxis` | no | first column | Column name to use as the category / X axis |

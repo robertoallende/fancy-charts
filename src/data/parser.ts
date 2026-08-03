@@ -1,4 +1,5 @@
 import type { ParseResult, SimpleConfig } from '../model/chart';
+import { SUPPORTED_VERSION } from '../model/chart';
 import { splitSource, parseYaml, detectMode } from './yaml-parser';
 import { parseTable } from './table-parser';
 import { buildOption } from './option-builder';
@@ -11,6 +12,11 @@ function validateSimpleConfig(
 	raw: Record<string, unknown>,
 	headers: string[],
 ): SimpleConfig | { error: string } {
+	const version = typeof raw['version'] === 'number' ? raw['version'] : 1;
+	if (version > SUPPORTED_VERSION) {
+		return { error: `This chart was created with version ${version} of the Fancy Charts format. Update the plugin to view it.` };
+	}
+
 	const type = raw['type'];
 	if (!type) return { error: `Missing required field 'type'. Supported types: ${VALID_TYPES_STR}.` };
 	if (!VALID_TYPES.includes(type as SimpleConfig['type'])) {
@@ -36,6 +42,7 @@ function validateSimpleConfig(
 	}
 
 	return {
+		version,
 		type: type as SimpleConfig['type'],
 		...(typeof raw['title'] === 'string' ? { title: raw['title'] as string } : {}),
 		...(typeof xAxis === 'string' ? { xAxis } : {}),

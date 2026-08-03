@@ -55,7 +55,7 @@ const THEME_DARK  = 'fancy-charts-dark';
 const DEBOUNCE_MS = 300;
 
 export function serializeBlock(state: ModalState): string {
-	const yaml: string[] = [`type: ${state.type}`];
+	const yaml: string[] = ['version: 1', `type: ${state.type}`];
 	if (state.title.trim()) yaml.push(`title: ${state.title.trim()}`);
 	if (state.xAxis.trim()) yaml.push(`xAxis: ${state.xAxis.trim()}`);
 

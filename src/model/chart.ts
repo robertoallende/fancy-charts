@@ -1,3 +1,5 @@
+export const SUPPORTED_VERSION = 1;
+
 export type ChartMode = 'simple' | 'advanced';
 
 export interface TableData {
@@ -6,6 +8,7 @@ export interface TableData {
 }
 
 export interface SimpleConfig {
+	version: number;
 	type: 'bar' | 'line' | 'pie' | 'scatter' | 'area' | 'funnel' | 'heatmap' | 'sankey';
 	title?: string;
 	xAxis?: string;
