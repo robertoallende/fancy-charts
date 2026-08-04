@@ -8,7 +8,7 @@ export class ChartRenderer {
 	}
 
 	render(option: Record<string, unknown>): void {
-		this.chart.setOption(option);
+		this.chart.setOption(option, { notMerge: true });
 	}
 
 	resize(): void {

@@ -19,12 +19,12 @@ describe('ChartRenderer', () => {
 		expect(init).toHaveBeenCalledWith(container, 'fancy-charts-dark', { renderer: 'svg' });
 	});
 
-	it('render() calls setOption with the provided option', () => {
+	it('render() calls setOption with notMerge: true to prevent stale series overlap', () => {
 		const container = document.createElement('div');
 		const renderer = new ChartRenderer(container);
 		const option = { series: [{ type: 'bar' }] };
 		renderer.render(option);
-		expect(mockChartInstance.setOption).toHaveBeenCalledWith(option);
+		expect(mockChartInstance.setOption).toHaveBeenCalledWith(option, { notMerge: true });
 	});
 
 	it('resize() calls chart.resize()', () => {
