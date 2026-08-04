@@ -3,6 +3,7 @@
 ## 0.1.6 - 04/08/2026
 
 - Fixed modal preview chart overlap when switching types: `setOption` now passes `notMerge: true` so changing from bar to pie (or any other type) fully replaces the chart state instead of merging, preventing stale axes and series from persisting in the preview
+- Added custom ribbon icon using the Fancy Charts logo SVG
 
 ## 0.1.5 - 04/08/2026
 
