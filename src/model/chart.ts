@@ -1,4 +1,4 @@
-export const SUPPORTED_VERSION = 1;
+export const SUPPORTED_VERSION = 2;
 
 export type ChartMode = 'simple' | 'advanced';
 

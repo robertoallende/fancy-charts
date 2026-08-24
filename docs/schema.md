@@ -1,4 +1,4 @@
-# Fancy Charts Block Schema — Version 1
+# Fancy Charts Block Schema — Version 2
 
 A self-contained specification for the markdown-based chart format. Any app that reads files following this schema will produce compatible charts.
 
@@ -94,6 +94,7 @@ When the top-level key `echarts:` is present, the block is treated as advanced m
 | `title` | no | none | Chart title displayed above the chart |
 | `xAxis` | no | first column | Column name to use as the category / X axis |
 | `yAxis` | no | all other columns | Ordered list of column names to plot as series |
+| `legend` | no | `true` | Whether to show the chart legend. Set to `false` to hide it |
 
 ### `type`
 
@@ -214,6 +215,16 @@ yAxis:
 An ordered list of column names to plot as series. Each entry must exactly match a column header in the markdown table. For `pie` and `scatter`, only the first entry is used.
 
 **Default**: all columns except the `xAxis` column.
+
+### `legend`
+
+```yaml
+legend: false
+```
+
+Optional. Controls whether the chart legend is rendered. Omitting the key or setting it to `true` shows the legend (default behaviour). Setting it to `false` hides it.
+
+Applies to: `bar`, `line`, `pie`, `area`, `funnel`. Has no effect on `scatter`, `heatmap`, and `sankey`, which do not render a legend.
 
 ## Config Keys — Advanced Mode
 
