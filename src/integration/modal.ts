@@ -14,6 +14,7 @@ export interface ModalState {
 	title: string;
 	xAxis: string;
 	tableText: string;
+	legend: boolean;
 	echartsYaml?: string;
 }
 
@@ -22,6 +23,7 @@ export const DEFAULT_STATE: ModalState = {
 	title: '',
 	xAxis: '',
 	tableText: '| category | value |\n| --- | --- |\n| A | 10 |\n| B | 20 |',
+	legend: true,
 };
 
 const SCATTER_TABLE = '| x | y |\n| --- | --- |\n| 1 | 5 |\n| 3 | 8 |\n| 5 | 2 |';
@@ -58,6 +60,7 @@ export function serializeBlock(state: ModalState): string {
 	const yaml: string[] = ['version: 1', `type: ${state.type}`];
 	if (state.title.trim()) yaml.push(`title: ${state.title.trim()}`);
 	if (state.xAxis.trim()) yaml.push(`xAxis: ${state.xAxis.trim()}`);
+	if (!state.legend) yaml.push('legend: false');
 
 	const inner = ['---', ...yaml, '---', state.tableText.trim()].join('\n');
 	return `\`\`\`fancy-charts\n${inner}\n\`\`\``;
@@ -84,8 +87,9 @@ export function deserializeBlock(raw: string): ModalState {
 	const title = typeof config['title'] === 'string' ? config['title'] : '';
 	const xAxis = typeof config['xAxis'] === 'string' ? config['xAxis'] : '';
 	const tableText = split.rest.trim() || DEFAULT_STATE.tableText;
+	const legend = config['legend'] === false ? false : true;
 
-	return { type, title, xAxis, tableText };
+	return { type, title, xAxis, tableText, legend };
 }
 
 export class FancyChartsModal extends Modal {
@@ -206,6 +210,15 @@ export class FancyChartsModal extends Modal {
 			this.xAxisInput.value = this.state.xAxis;
 			this.xAxisInput.addEventListener('input', () => {
 				this.state.xAxis = this.xAxisInput!.value;
+				this.schedulePreviewUpdate();
+			});
+		});
+
+		this.renderField(container, 'Show legend', el => {
+			const cb = el.createEl('input', { cls: 'fc-modal-input', type: 'checkbox' });
+			cb.checked = this.state.legend;
+			cb.addEventListener('change', () => {
+				this.state.legend = cb.checked;
 				this.schedulePreviewUpdate();
 			});
 		});

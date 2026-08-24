@@ -13,6 +13,7 @@ export interface SimpleConfig {
 	title?: string;
 	xAxis?: string;
 	yAxis?: string[];
+	legend?: boolean;
 }
 
 export type AdvancedConfig = Record<string, unknown>;

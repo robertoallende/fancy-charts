@@ -17,7 +17,7 @@ function buildCartesianOption(config: SimpleConfig, table: TableData): Record<st
 
 	const option: Record<string, unknown> = {
 		tooltip: { trigger: 'axis' },
-		legend: { data: seriesCols, bottom: 10 },
+		...(config.legend !== false ? { legend: { data: seriesCols, bottom: 10 } } : {}),
 		grid: { bottom: 60 },
 		dataset: {
 			source: [
@@ -44,7 +44,7 @@ function buildPieOption(config: SimpleConfig, table: TableData): Record<string, 
 
 	const option: Record<string, unknown> = {
 		tooltip: { trigger: 'item' },
-		legend: { bottom: 10 },
+		...(config.legend !== false ? { legend: { bottom: 10 } } : {}),
 		dataset: {
 			source: [
 				[xAxisCol, valueCol],
@@ -72,7 +72,7 @@ function buildAreaOption(config: SimpleConfig, table: TableData): Record<string,
 
 	const option: Record<string, unknown> = {
 		tooltip: { trigger: 'axis' },
-		legend: { data: seriesCols, bottom: 10 },
+		...(config.legend !== false ? { legend: { data: seriesCols, bottom: 10 } } : {}),
 		grid: { bottom: 60 },
 		dataset: {
 			source: [
@@ -132,7 +132,7 @@ function buildFunnelOption(config: SimpleConfig, table: TableData): Record<strin
 
 	const option: Record<string, unknown> = {
 		tooltip: { trigger: 'item' },
-		legend: { bottom: 10 },
+		...(config.legend !== false ? { legend: { bottom: 10 } } : {}),
 		series: [{
 			type: 'funnel',
 			data: table.rows.map(r => ({ name: r[ni], value: Number(r[vi]) })),

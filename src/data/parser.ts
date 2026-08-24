@@ -41,12 +41,15 @@ function validateSimpleConfig(
 		}
 	}
 
+	const legend = raw['legend'];
+
 	return {
 		version,
 		type: type as SimpleConfig['type'],
 		...(typeof raw['title'] === 'string' ? { title: raw['title'] } : {}),
 		...(typeof xAxis === 'string' ? { xAxis } : {}),
 		...(Array.isArray(yAxis) ? { yAxis: yAxis as string[] } : {}),
+		...(typeof legend === 'boolean' ? { legend } : {}),
 	};
 }
 

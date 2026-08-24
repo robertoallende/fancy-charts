@@ -72,6 +72,50 @@ describe('buildOption — bar', () => {
 	});
 });
 
+describe('buildOption — legend: false', () => {
+	it('omits legend from bar chart when legend is false', () => {
+		const config: SimpleConfig = { type: 'bar', xAxis: 'quarter', legend: false };
+		const option = buildOption(config, basicTable);
+		expect(option.legend).toBeUndefined();
+	});
+
+	it('omits legend from line chart when legend is false', () => {
+		const config: SimpleConfig = { type: 'line', xAxis: 'quarter', legend: false };
+		const option = buildOption(config, basicTable);
+		expect(option.legend).toBeUndefined();
+	});
+
+	it('omits legend from pie chart when legend is false', () => {
+		const config: SimpleConfig = { type: 'pie', xAxis: 'quarter', legend: false };
+		const option = buildOption(config, basicTable);
+		expect(option.legend).toBeUndefined();
+	});
+
+	it('omits legend from area chart when legend is false', () => {
+		const config: SimpleConfig = { type: 'area', xAxis: 'quarter', legend: false };
+		const option = buildOption(config, basicTable);
+		expect(option.legend).toBeUndefined();
+	});
+
+	it('omits legend from funnel chart when legend is false', () => {
+		const config: SimpleConfig = { type: 'funnel', xAxis: 'quarter', legend: false };
+		const option = buildOption(config, basicTable);
+		expect(option.legend).toBeUndefined();
+	});
+
+	it('includes legend when legend is true', () => {
+		const config: SimpleConfig = { type: 'bar', xAxis: 'quarter', legend: true };
+		const option = buildOption(config, basicTable);
+		expect(option.legend).toBeDefined();
+	});
+
+	it('includes legend when legend is omitted', () => {
+		const config: SimpleConfig = { type: 'bar', xAxis: 'quarter' };
+		const option = buildOption(config, basicTable);
+		expect(option.legend).toBeDefined();
+	});
+});
+
 describe('buildOption — line', () => {
 	it('builds a line chart with correct series type', () => {
 		const config: SimpleConfig = { type: 'line', xAxis: 'quarter' };
