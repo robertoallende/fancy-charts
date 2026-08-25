@@ -104,6 +104,22 @@ Because the data is a standard Markdown table, a chart block is still readable �
 
 ![Fancy Charts block as plain markdown](images/demo-format.png)
 
+### Generate charts with AI
+
+If you use an agentic AI coding tool — Claude Code, Kiro, Codex, Pi, or any of the [75+ supported agents](https://skills.sh) — you can install the Fancy Charts skill and ask it to generate chart blocks for you directly in your vault.
+
+```bash
+npx skills add robertoallende/fancy-charts
+```
+
+Once installed, your AI assistant knows the full block schema: chart types, config keys, table format, axis mapping, and advanced ECharts passthrough. You can prompt it naturally:
+
+- *"Create a bar chart showing monthly revenue and costs for Q1–Q4"*
+- *"Generate a sankey diagram showing traffic flow between pages on my site"*
+- *"Add a heatmap of activity by day and hour using this data table"*
+
+The AI writes a valid `fancy-charts` block directly into your note, ready to render with the plugin.
+
 ## Feature Requests and Issues
 
 If there's a gap you'd like prioritized, [open an issue](https://github.com/robertoallende/fancy-charts/issues) — this roadmap takes real usage and feedback into account.

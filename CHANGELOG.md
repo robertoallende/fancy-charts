@@ -4,6 +4,7 @@
 
 - Added optional `legend` field to simple mode: set `legend: false` in the block config to hide the chart legend; the modal exposes this as a "Show legend" checkbox
 - Bumped block format to schema version 2 to reflect the new field
+- Added `SKILL.md` — install Fancy Charts as an agent skill with `npx skills add robertoallende/fancy-charts` to give your AI coding assistant the full block schema; works with Claude Code, Kiro, Codex, Pi, and [75+ other agents](https://skills.sh)
 
 ## 0.1.6 - 04/08/2026
 
